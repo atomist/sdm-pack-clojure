@@ -328,7 +328,6 @@ export function executeReleaseVersion(
             if (pi.version !== versionRelease) {
                 const message = `current master package version (${pi.version}) seems to have already been ` +
                     `incremented after ${releaseVersion} release`;
-                console.debug(message);
                 const log = new DelimitedWriteProgressLogDecorator(rwlc.progressLog, "\n");
                 log.write(`${message}\n`);
                 await log.flush();

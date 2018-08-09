@@ -1,6 +1,6 @@
 .vscode/
 /build/
-/src/typings
+/lib/typings
 node_modules/
 *.js
 npm-debug.log
