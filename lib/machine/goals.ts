@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goal, IndependentOfEnvironment } from "../../node_modules/@atomist/sdm";
+import { Goal, IndependentOfEnvironment } from "@atomist/sdm";
 
 export const PublishGoal = new Goal({
     uniqueName: "Publish",
