@@ -167,7 +167,7 @@ async function enrich(options: SpawnOptions = {}, project: GitProject): Promise<
     try {
         encryptedEnv = { env: clj.vault(key, `${project.baseDir}/vault.txt`) };
     } catch {
-        logger.info('no local encryptedEnv');
+        logger.info("no local encryptedEnv");
     }
     if (!options.cwd) {
         options.cwd = project.baseDir;
