@@ -163,8 +163,12 @@ async function enrich(options: SpawnOptions = {}, project: GitProject): Promise<
     const key = process.env.TEAM_CRED;
     const vault = path.join(fs.realpathSync(__dirname), "../resources/vault.txt");
     const defaultEncryptedEnv = { env: clj.vault(key, vault) };
-    logger.info(`run build enrichment on SpawnOptions`);
-    const encryptedEnv = { env: clj.vault(key, `${project.baseDir}/vault.txt`) };
+    let encryptedEnv = {};
+    try {
+        encryptedEnv = { env: clj.vault(key, `${project.baseDir}/vault.txt`) };
+    } catch {
+        logger.info('no local encryptedEnv');
+    }
     if (!options.cwd) {
         options.cwd = project.baseDir;
     }
