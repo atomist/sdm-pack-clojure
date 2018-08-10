@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
+export {
+    DefaultBranchGoals,
+    LeinBuildGoals,
+    LeinDefaultBranchBuildGoals,
+    LeinDockerGoals,
+    PublishGoal} from "./lib/machine/goals";
 export { LeinSupport } from "./lib/machine/leinSupport";
-export { PublishGoal } from "./lib/machine/goals";
-export { IsLein, IsClojure } from "./lib/support/pushTest";
 export { MaterialChangeToClojureRepo } from "./lib/support/materialChangeToClojureRepo";
+export { IsClojure, IsLein } from "./lib/support/pushTest";

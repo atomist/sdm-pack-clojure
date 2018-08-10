@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-import { Goal, IndependentOfEnvironment, Goals, ReviewGoal, goals, AutofixGoal, BuildGoal } from "@atomist/sdm";
-import { VersionGoal, TagGoal, DockerBuildGoal } from "@atomist/sdm-core";
+import {
+    AutofixGoal,
+    BuildGoal,
+    Goal,
+    Goals,
+    goals,
+    IndependentOfEnvironment,
+    ReviewGoal} from "@atomist/sdm";
+import {
+    DockerBuildGoal,
+    TagGoal,
+    VersionGoal} from "@atomist/sdm-core";
 
 export const PublishGoal = new Goal({
     uniqueName: "Publish",
