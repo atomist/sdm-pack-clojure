@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Goal, IndependentOfEnvironment } from "@atomist/sdm";
+import { Goal, IndependentOfEnvironment, Goals, ReviewGoal, goals, AutofixGoal, BuildGoal } from "@atomist/sdm";
+import { VersionGoal, TagGoal, DockerBuildGoal } from "@atomist/sdm-core";
 
 export const PublishGoal = new Goal({
     uniqueName: "Publish",
@@ -25,3 +26,22 @@ export const PublishGoal = new Goal({
     completedDescription: "Published",
     failedDescription: "Published failed",
 });
+
+// Just running review and autofix
+export const CheckGoals: Goals = goals("Check")
+    .plan(VersionGoal, ReviewGoal);
+
+export const DefaultBranchGoals: Goals = goals("Default Branch")
+    .plan(AutofixGoal, TagGoal);
+
+// Build including docker build
+export const LeinBuildGoals: Goals = goals("Lein Build")
+    .plan(CheckGoals)
+    .plan(BuildGoal).after(ReviewGoal);
+
+export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
+    .plan(LeinBuildGoals, DefaultBranchGoals)
+    .plan(PublishGoal).after(BuildGoal);
+
+export const LeinDockerGoals: Goals = goals("Lein Docker Build")
+    .plan(LeinBuildGoals, DockerBuildGoal);
