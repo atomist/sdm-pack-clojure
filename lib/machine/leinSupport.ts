@@ -50,8 +50,8 @@ import { SpawnBuilder } from "@atomist/sdm-core/internal/delivery/build/local/Sp
 import { IsLein } from "@atomist/sdm-core/pack/clojure/pushTests";
 import { DockerImageNameCreator } from "@atomist/sdm-core/pack/docker/executeDockerBuild";
 import * as build from "@atomist/sdm/api-helper/dsl/buildDsl";
-
 import { LogSuppressor } from "@atomist/sdm/api-helper/log/logInterpreters";
+import { metadata } from "@atomist/sdm/api-helper/misc/extensionPack";
 import {
     asSpawnCommand,
     spawnAndWatch,
@@ -90,9 +90,7 @@ const imageNamer: DockerImageNameCreator =
     };
 
 export const LeinSupport: ExtensionPack = {
-    name: "Leiningen Support",
-    vendor: "Atomist",
-    version: "0.1.0",
+    ...metadata(),
     configure: sdm => {
 
         sdm.addBuildRules(
