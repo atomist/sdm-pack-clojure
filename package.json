@@ -20,7 +20,7 @@
     "url": "https://github.com/atomist/sdm-pack-clojure/issues"
   },
   "dependencies": {
-    "@atomist/clj-editors": "^0.3.8"
+    "@atomist/clj-editors": "^0.3.10"
   },
   "peerDependencies": {
     "@atomist/automation-client": "^0.18.0",
