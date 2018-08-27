@@ -1,5 +1,8 @@
 # @atomist/sdm-pack-clojure
 
+[![atomist sdm goals](http://badge.atomist.com/T29E48P34/atomist/sdm-pack-clojure/22172de5-0199-4283-a555-5f3b23ecfc5d)](https://app.atomist.com/workspace/T29E48P34)
+[![npm version](https://img.shields.io/npm/v/@atomist/sdm-pack-clojure/next.svg)](https://www.npmjs.com/package/@atomist/sdm-pack-clojure/v/next)
+
 [Atomist][atomist] software delivery machine (SDM) extension pack
 providing automated creation, building, and delivery of
 [Spring][spring] and [Spring Boot][spring-boot] applications.
