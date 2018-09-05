@@ -41,7 +41,6 @@ import {
 import { createTagForStatus } from "@atomist/sdm-core";
 import { ProjectIdentifier } from "@atomist/sdm-core";
 import { readSdmVersion } from "@atomist/sdm-core";
-import {     } from "@atomist/sdm-core";
 import { DockerOptions } from "@atomist/sdm-pack-docker";
 import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm/api-helper/log/DelimitedWriteProgressLogDecorator";
 import {
