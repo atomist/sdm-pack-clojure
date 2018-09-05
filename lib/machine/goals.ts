@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
+import { Build } from "@atomist/sdm";
 import {
-    AutofixGoal,
-    BuildGoal,
     Goal,
+} from "@atomist/sdm/api/goal/Goal";
+import {
     Goals,
     goals,
+} from "@atomist/sdm/api/goal/Goals";
+import {
     IndependentOfEnvironment,
-    ReviewGoal} from "@atomist/sdm";
+} from "@atomist/sdm/api/goal/support/environment";
+import {
+    AutofixGoal,
+} from "@atomist/sdm/api/machine/wellKnownGoals";
 import {
     DockerBuildGoal,
     TagGoal,
-    VersionGoal} from "@atomist/sdm-core";
+    VersionGoal,
+} from "@atomist/sdm/pack/well-known-goals/commonGoals";
 
 export const PublishGoal = new Goal({
     uniqueName: "Publish",
@@ -37,9 +44,11 @@ export const PublishGoal = new Goal({
     failedDescription: "Published failed",
 });
 
+export const LeinBuildGoal = new Build();
+
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
-    .plan(VersionGoal, ReviewGoal);
+    .plan(VersionGoal);
 
 export const DefaultBranchGoals: Goals = goals("Default Branch")
     .plan(AutofixGoal, TagGoal);
@@ -47,11 +56,11 @@ export const DefaultBranchGoals: Goals = goals("Default Branch")
 // Build including docker build
 export const LeinBuildGoals: Goals = goals("Lein Build")
     .plan(CheckGoals)
-    .plan(BuildGoal).after(ReviewGoal);
+    .plan(LeinBuildGoal).after(AutofixGoal);
 
 export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
     .plan(LeinBuildGoals, DefaultBranchGoals)
-    .plan(PublishGoal).after(BuildGoal);
+    .plan(PublishGoal).after(LeinBuildGoal);
 
 export const LeinDockerGoals: Goals = goals("Lein Docker Build")
     .plan(LeinBuildGoals, DockerBuildGoal);

@@ -21,18 +21,18 @@
   },
   "peerDependencies": {
     "@atomist/clj-editors": "^0.4.0",
-    "@atomist/automation-client": "^0.18.0",
-    "@atomist/sdm": "^0.3.2",
-    "@atomist/sdm-core": "^0.3.2",
+    "@atomist/automation-client": "*",
+    "@atomist/sdm": "*",
+    "@atomist/sdm-core": "*",
     "dateformat": "^3.0.3",
     "lodash": "^4.17.10"
   },
   "devDependencies": {
+    "@atomist/automation-client": "^1.0.0-M.3",
+    "@atomist/cli": "^1.0.0-M.2",
     "@atomist/clj-editors": "^0.4.0",
-    "@atomist/automation-client": "0.18.0-20180726075348",
-    "@atomist/cli": "^0.5.2",
-    "@atomist/sdm": "0.3.2-20180727002548",
-    "@atomist/sdm-core": "0.3.2-20180725161559",
+    "@atomist/sdm": "^1.0.0-M.3",
+    "@atomist/sdm-core": "^1.0.0-M.3",
     "@types/dateformat": "^1.0.1",
     "@types/lodash": "^4.14.116",
     "@types/mocha": "^2.2.48",
@@ -66,8 +66,7 @@
     "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
     "clean:run": "rimraf *-v8.log profile.txt log",
-    "compile": "npm-run-all gql:gen compile:ts",
-    "gql:gen": "atomist gql-gen --no-install \"lib/graphql/**/*.graphql\"",
+    "compile": "npm-run-all compile:ts",
     "compile:ts": "tsc --project .",
     "doc": "typedoc --mode modules --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
     "fmt": "tsfmt --replace",
@@ -80,5 +79,8 @@
   "engines": {
     "node": "9.x.x",
     "npm": "5.x.x"
+  },
+  "dependencies": {
+    "@atomist/sdm-pack-docker": "^1.0.0-docker-pack.20180903214340"
   }
 }

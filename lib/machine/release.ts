@@ -28,13 +28,12 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
+    ExecuteGoal,
     ExecuteGoalResult,
-    ExecuteGoalWithLog,
     GoalInvocation,
     PrepareForGoalExecution,
     ProgressLog,
     ProjectLoader,
-    RunWithLogContext,
 } from "@atomist/sdm";
 import {
     createRelease,
@@ -42,7 +41,8 @@ import {
 import { createTagForStatus } from "@atomist/sdm-core";
 import { ProjectIdentifier } from "@atomist/sdm-core";
 import { readSdmVersion } from "@atomist/sdm-core";
-import { DockerOptions } from "@atomist/sdm-core";
+import {     } from "@atomist/sdm-core";
+import { DockerOptions } from "@atomist/sdm-pack-docker";
 import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm/api-helper/log/DelimitedWriteProgressLogDecorator";
 import {
     ChildProcessResult,
@@ -109,6 +109,7 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
                 error: true,
                 code: -1,
                 message: `Spawned command errored: ${swc.cmd.command} ${swc.cmd.args.join(" ")}: ${e.message}`,
+                childProcess: res.childProcess,
             };
         }
         if (res.error) {
@@ -191,7 +192,7 @@ async function executeLoggers(els: ExecuteLogger[], progressLog: ProgressLog): P
     return Success;
 }
 
-export async function dockerReleasePreparation(p: GitProject, rwlc: RunWithLogContext): Promise<ExecuteGoalResult> {
+export async function dockerReleasePreparation(p: GitProject, rwlc: GoalInvocation): Promise<ExecuteGoalResult> {
     const version = await rwlcVersion(rwlc);
     const dockerOptions = configurationValue<DockerOptions>("sdm.docker.hub");
     const image = dockerImage({
@@ -221,9 +222,9 @@ export function executeReleaseDocker(
     projectLoader: ProjectLoader,
     preparations: PrepareForGoalExecution[] = DockerReleasePreparations,
     options?: DockerOptions,
-): ExecuteGoalWithLog {
+): ExecuteGoal {
 
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
         if (!options.registry) {
             throw new Error(`No registry defined in Docker options`);
@@ -270,8 +271,8 @@ export function executeReleaseDocker(
 /**
  * Create release semantic version tag and GitHub release for that tag.
  */
-export function executeReleaseTag(projectLoader: ProjectLoader): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+export function executeReleaseTag(projectLoader: ProjectLoader): ExecuteGoal {
+    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
@@ -302,9 +303,9 @@ export function executeReleaseTag(projectLoader: ProjectLoader): ExecuteGoalWith
 export function executeReleaseVersion(
     projectLoader: ProjectLoader,
     projectIdentifier: ProjectIdentifier,
-): ExecuteGoalWithLog {
+): ExecuteGoal {
 
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {

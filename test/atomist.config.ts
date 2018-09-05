@@ -15,7 +15,7 @@
  */
 
 import {Configuration} from "@atomist/automation-client";
-import {FingerprintGoal, PushTest, pushTest, SoftwareDeliveryMachine, whenPushSatisfies} from "@atomist/sdm";
+import {PushTest, pushTest, SoftwareDeliveryMachine, whenPushSatisfies} from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,
@@ -24,9 +24,6 @@ import {SoftwareDeliveryMachineConfiguration} from "@atomist/sdm/api/machine/Sof
 import {LeinSupport} from "..";
 import { LeinDefaultBranchBuildGoals } from "../lib/machine/goals";
 
-const IsNpm: PushTest = pushTest(`contains package.json file`, async pci =>
-    !!(await pci.project.getFile("package.json")),
-);
 const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>
     !!(await pci.project.getFile("project.clj")),
 );
@@ -39,10 +36,7 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
         },
         whenPushSatisfies(IsLein)
             .itMeans("fingerprint a clojure project")
-            .setGoals(LeinDefaultBranchBuildGoals),
-        whenPushSatisfies(IsNpm)
-            .itMeans("fingeprint an npm project")
-            .setGoals(FingerprintGoal));
+            .setGoals(LeinDefaultBranchBuildGoals));
 
     sdm.addExtensionPacks(LeinSupport);
 

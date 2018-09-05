@@ -26,30 +26,29 @@ import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
     Builder,
+    ExecuteGoal,
     ExecuteGoalResult,
-    ExecuteGoalWithLog,
     ExtensionPack,
+    GoalInvocation,
     hasFile,
     not,
-    RunWithLogContext,
     SdmGoalEvent,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineOptions,
     ToDefaultBranch,
 } from "@atomist/sdm";
 import {
-    DockerBuildGoal,
-    DockerOptions,
-    executeDockerBuild,
     executeVersioner,
     readSdmVersion,
-    VersionGoal,
 } from "@atomist/sdm-core";
 import { ProjectVersioner } from "@atomist/sdm-core/internal/delivery/build/local/projectVersioner";
 import { SpawnBuilder } from "@atomist/sdm-core/internal/delivery/build/local/SpawnBuilder";
 import { IsLein } from "@atomist/sdm-core/pack/clojure/pushTests";
-import { DockerImageNameCreator } from "@atomist/sdm-core/pack/docker/executeDockerBuild";
-import * as build from "@atomist/sdm/api-helper/dsl/buildDsl";
+import {
+    DockerImageNameCreator,
+    DockerOptions,
+    executeDockerBuild,
+} from "@atomist/sdm-pack-docker";
 import { LogSuppressor } from "@atomist/sdm/api-helper/log/logInterpreters";
 import { metadata } from "@atomist/sdm/api-helper/misc/extensionPack";
 import {
@@ -57,13 +56,17 @@ import {
     spawnAndWatch,
 } from "@atomist/sdm/api-helper/misc/spawned";
 import { HasTravisFile } from "@atomist/sdm/api-helper/pushtest/ci/ciPushTests";
+import {
+    DockerBuildGoal,
+    VersionGoal,
+} from "@atomist/sdm/pack/well-known-goals/commonGoals";
 import { SpawnOptions } from "child_process";
 import * as df from "dateformat";
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import {
-    PublishGoal,
+    LeinBuildGoal, PublishGoal,
 } from "./goals";
 import { rwlcVersion } from "./release";
 
@@ -93,15 +96,15 @@ export const LeinSupport: ExtensionPack = {
     ...metadata(),
     configure: sdm => {
 
-        sdm.addBuildRules(
-            build.when(IsLein)
-                .itMeans("Lein build")
-                .set(leinBuilder(sdm)),
+        LeinBuildGoal.with(
+            {name: "Lein build",
+             builder: leinBuilder(sdm),
+             pushTest: IsLein},
         );
         sdm.addGoalImplementation("Deploy Jar", PublishGoal,
             leinDeployer(sdm.configuration.sdm));
         sdm.addGoalImplementation("leinVersioner", VersionGoal,
-            executeVersioner(sdm.configuration.sdm.projectLoader, LeinProjectVersioner), { pushTest: IsLein });
+            executeVersioner(LeinProjectVersioner), { pushTest: IsLein });
         sdm.addGoalImplementation("leinDockerBuild", DockerBuildGoal,
             executeDockerBuild(
                 sdm.configuration.sdm.projectLoader,
@@ -124,8 +127,8 @@ export const LeinSupport: ExtensionPack = {
     },
 };
 
-function leinDeployer(sdm: SoftwareDeliveryMachineOptions): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+function leinDeployer(sdm: SoftwareDeliveryMachineOptions): ExecuteGoal {
+    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
         const version = await rwlcVersion(rwlc);
 
@@ -202,7 +205,7 @@ function leinBuilder(sdm: SoftwareDeliveryMachine): Builder {
         });
 }
 
-export async function MetajarPreparation(p: GitProject, rwlc: RunWithLogContext): Promise<ExecuteGoalResult> {
+export async function MetajarPreparation(p: GitProject, rwlc: GoalInvocation): Promise<ExecuteGoalResult> {
     logger.info(`run ./metajar.sh from ${p.baseDir}`);
     const result = await spawnAndWatch(
         {
