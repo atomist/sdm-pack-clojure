@@ -28,8 +28,7 @@ import * as _ from "lodash";
 const ExtsToIgnore = ["README.md"];
 
 export const MaterialChangeToClojureRepo: PushTest = pushTest("Material change to Clojure repo", async pci => {
-    const beforeSha: string = _.get(pci, "push.before.sha");
-    const changedFiles = await filesChangedSince(pci.project, beforeSha);
+    const changedFiles = await filesChangedSince(pci.project, pci.push);
     if (!changedFiles) {
         logger.info("Cannot determine if change is material on %j: can't enumerate changed files", pci.id);
         return true;
