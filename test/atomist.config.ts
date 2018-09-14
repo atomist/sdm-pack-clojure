@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {Configuration} from "@atomist/automation-client";
-import {PushTest, pushTest, SoftwareDeliveryMachine, whenPushSatisfies} from "@atomist/sdm";
+import { Configuration } from "@atomist/automation-client";
+import { PushTest, pushTest, SoftwareDeliveryMachine, whenPushSatisfies } from "@atomist/sdm";
+import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,
 } from "@atomist/sdm-core";
-import {SoftwareDeliveryMachineConfiguration} from "@atomist/sdm/api/machine/SoftwareDeliveryMachineOptions";
-import {LeinSupport} from "..";
+import { LeinSupport } from "..";
 import { LeinDefaultBranchBuildGoals } from "../lib/machine/goals";
 
 const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>
@@ -31,9 +31,9 @@ const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>
 export function machineMaker(config: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
 
     const sdm = createSoftwareDeliveryMachine({
-            name: `${configuration.name}-test`,
-            configuration: config,
-        },
+        name: `${configuration.name}-test`,
+        configuration: config,
+    },
         whenPushSatisfies(IsLein)
             .itMeans("fingerprint a clojure project")
             .setGoals(LeinDefaultBranchBuildGoals));

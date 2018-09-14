@@ -18,11 +18,15 @@ import {
     HandlerContext,
     logger,
 } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef } from "@atomist/automation-client";
 
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { GitProject } from "@atomist/automation-client";
 import * as clj from "@atomist/clj-editors";
 
+import {
+    asSpawnCommand,
+    spawnAndWatch,
+} from "@atomist/automation-client";
 import {
     allSatisfied,
     Builder,
@@ -37,29 +41,25 @@ import {
     SoftwareDeliveryMachineOptions,
     ToDefaultBranch,
 } from "@atomist/sdm";
+import { metadata } from "@atomist/sdm";
+import { LogSuppressor } from "@atomist/sdm";
+import { IsLein } from "@atomist/sdm-core";
+import { SpawnBuilder } from "@atomist/sdm-core";
 import {
     executeVersioner,
     readSdmVersion,
 } from "@atomist/sdm-core";
-import { ProjectVersioner } from "@atomist/sdm-core/internal/delivery/build/local/projectVersioner";
-import { SpawnBuilder } from "@atomist/sdm-core/internal/delivery/build/local/SpawnBuilder";
-import { IsLein } from "@atomist/sdm-core/pack/clojure/pushTests";
+import { ProjectVersioner } from "@atomist/sdm-core";
 import {
     DockerImageNameCreator,
     DockerOptions,
     executeDockerBuild,
 } from "@atomist/sdm-pack-docker";
-import { LogSuppressor } from "@atomist/sdm/api-helper/log/logInterpreters";
-import { metadata } from "@atomist/sdm/api-helper/misc/extensionPack";
-import {
-    asSpawnCommand,
-    spawnAndWatch,
-} from "@atomist/sdm/api-helper/misc/spawned";
-import { HasTravisFile } from "@atomist/sdm/api-helper/pushtest/ci/ciPushTests";
+import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import {
     DockerBuildGoal,
     VersionGoal,
-} from "@atomist/sdm/pack/well-known-goals/commonGoals";
+} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { SpawnOptions } from "child_process";
 import * as df from "dateformat";
 import * as fs from "fs";
@@ -97,9 +97,11 @@ export const LeinSupport: ExtensionPack = {
     configure: sdm => {
 
         LeinBuildGoal.with(
-            {name: "Lein build",
-             builder: leinBuilder(sdm),
-             pushTest: IsLein},
+            {
+                name: "Lein build",
+                builder: leinBuilder(sdm),
+                pushTest: IsLein,
+            },
         );
         sdm.addGoalImplementation("Deploy Jar", PublishGoal,
             leinDeployer(sdm.configuration.sdm));
@@ -107,7 +109,6 @@ export const LeinSupport: ExtensionPack = {
             executeVersioner(LeinProjectVersioner), { pushTest: IsLein });
         sdm.addGoalImplementation("leinDockerBuild", DockerBuildGoal,
             executeDockerBuild(
-                sdm.configuration.sdm.projectLoader,
                 imageNamer,
                 [MetajarPreparation],
                 {

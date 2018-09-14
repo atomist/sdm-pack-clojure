@@ -21,7 +21,7 @@ import {
 } from "@atomist/sdm";
 import {
     filesChangedSince,
-} from "@atomist/sdm/api-helper/misc/git/filesChangedSince";
+} from "@atomist/sdm";
 
 import * as _ from "lodash";
 

@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-import { Build } from "@atomist/sdm";
-import {
-    Goal,
-} from "@atomist/sdm/api/goal/Goal";
-import {
-    Goals,
-    goals,
-} from "@atomist/sdm/api/goal/Goals";
-import {
-    IndependentOfEnvironment,
-} from "@atomist/sdm/api/goal/support/environment";
 import {
     AutofixGoal,
-} from "@atomist/sdm/api/machine/wellKnownGoals";
+    Build,
+    Goal,
+    Goals,
+    goals,
+    IndependentOfEnvironment,
+} from "@atomist/sdm";
+
 import {
     DockerBuildGoal,
     TagGoal,
     VersionGoal,
-} from "@atomist/sdm/pack/well-known-goals/commonGoals";
+} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 
 export const PublishGoal = new Goal({
     uniqueName: "Publish",

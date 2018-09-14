@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { PredicatePushTest } from "@atomist/sdm/api/mapping/PushTest";
+import { PredicatePushTest } from "@atomist/sdm";
 import {
     hasFile,
     hasFileWithExtension,
-} from "@atomist/sdm/api/mapping/support/commonPushTests";
+} from "@atomist/sdm";
 
 export const IsClojure: PredicatePushTest = hasFileWithExtension("clj");
 export const IsLein = hasFile("project.clj");
