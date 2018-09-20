@@ -28,7 +28,7 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "@atomist/automation-client": "^1.0.0-master.20180914125809",
+    "@atomist/automation-client": "1.0.0-M.4",
     "@atomist/cli": "^1.0.0-master.20180910175255",
     "@atomist/clj-editors": "0.5.7",
     "@atomist/sdm": "^1.0.0-master.20180914145042",
