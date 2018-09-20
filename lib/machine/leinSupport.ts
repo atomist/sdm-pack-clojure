@@ -66,7 +66,8 @@ import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import {
-    LeinBuildGoal, PublishGoal,
+    LeinBuildGoal,
+    PublishGoal,
 } from "./goals";
 import { rwlcVersion } from "./release";
 

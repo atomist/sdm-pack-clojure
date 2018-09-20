@@ -16,8 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import {
-    PushTest,
     pushTest,
+    PushTest,
 } from "@atomist/sdm";
 import {
     filesChangedSince,

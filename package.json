@@ -30,7 +30,7 @@
   "devDependencies": {
     "@atomist/automation-client": "^1.0.0-master.20180914125809",
     "@atomist/cli": "^1.0.0-master.20180910175255",
-    "@atomist/clj-editors": "^0.4.0",
+    "@atomist/clj-editors": "0.5.7",
     "@atomist/sdm": "^1.0.0-master.20180914145042",
     "@atomist/sdm-core": "^1.0.0-master.20180914141908",
     "@types/dateformat": "^1.0.1",

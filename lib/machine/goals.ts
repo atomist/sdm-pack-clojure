@@ -18,8 +18,8 @@ import {
     AutofixGoal,
     Build,
     Goal,
-    Goals,
     goals,
+    Goals,
     IndependentOfEnvironment,
 } from "@atomist/sdm";
 
