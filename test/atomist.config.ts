@@ -15,7 +15,12 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
-import { PushTest, pushTest, SoftwareDeliveryMachine, whenPushSatisfies } from "@atomist/sdm";
+import {
+    pushTest,
+    PushTest,
+    SoftwareDeliveryMachine,
+    whenPushSatisfies,
+} from "@atomist/sdm";
 import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm";
 import {
     configureSdm,
