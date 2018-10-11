@@ -55,7 +55,7 @@ export const DefaultBranchGoals: Goals = goals("Default Branch")
 // Build including docker build
 export const LeinBuildGoals: Goals = goals("Lein Build")
     .plan(CheckGoals)
-    .plan(leinBuild).after(version);
+    .plan(leinBuild).after(version, autofix);
 
 export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
     .plan(DefaultBranchGoals, LeinBuildGoals)
