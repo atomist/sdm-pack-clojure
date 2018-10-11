@@ -15,59 +15,51 @@
  */
 
 import {
+    asSpawnCommand,
+    GitHubRepoRef,
+    GitProject,
     HandlerContext,
     logger,
-} from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client";
-
-import { GitProject } from "@atomist/automation-client";
-import * as clj from "@atomist/clj-editors";
-
-import {
-    asSpawnCommand,
     spawnAndWatch,
 } from "@atomist/automation-client";
+import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
-    Builder,
     ExecuteGoal,
     ExecuteGoalResult,
     ExtensionPack,
     GoalInvocation,
+    GoalProjectListenerEvent,
+    GoalProjectListenerRegistration,
     hasFile,
+    LogSuppressor,
+    metadata,
     not,
     SdmGoalEvent,
-    SoftwareDeliveryMachine,
-    SoftwareDeliveryMachineOptions,
     ToDefaultBranch,
 } from "@atomist/sdm";
-import { metadata } from "@atomist/sdm";
-import { LogSuppressor } from "@atomist/sdm";
-import { IsLein } from "@atomist/sdm-core";
-import { SpawnBuilder } from "@atomist/sdm-core";
 import {
-    executeVersioner,
+    ProjectVersioner,
     readSdmVersion,
 } from "@atomist/sdm-core";
-import { ProjectVersioner } from "@atomist/sdm-core";
+import { spawnBuilder } from "@atomist/sdm-pack-build";
 import {
     DockerImageNameCreator,
     DockerOptions,
-    executeDockerBuild,
 } from "@atomist/sdm-pack-docker";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
-import {
-    DockerBuildGoal,
-    VersionGoal,
-} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { SpawnOptions } from "child_process";
 import * as df from "dateformat";
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
+import { IsLein } from "../support/pushTest";
 import {
-    LeinBuildGoal,
-    PublishGoal,
+    autofix,
+    dockerBuild,
+    leinBuild,
+    publish,
+    version,
 } from "./goals";
 import { rwlcVersion } from "./release";
 
@@ -97,65 +89,73 @@ export const LeinSupport: ExtensionPack = {
     ...metadata(),
     configure: sdm => {
 
-        LeinBuildGoal.with(
+        leinBuild.with(
             {
                 name: "Lein build",
-                builder: leinBuilder(sdm),
+                builder: LeinBuilder,
                 pushTest: IsLein,
             },
         );
-        sdm.addGoalImplementation("Deploy Jar", PublishGoal,
-            leinDeployer(sdm.configuration.sdm));
-        sdm.addGoalImplementation("leinVersioner", VersionGoal,
-            executeVersioner(LeinProjectVersioner), { pushTest: IsLein });
-        sdm.addGoalImplementation("leinDockerBuild", DockerBuildGoal,
-            executeDockerBuild(
-                imageNamer,
-                [MetajarPreparation],
-                {
+
+        publish.with({
+            name: "deploy-jar",
+            goalExecutor: LeinDeployer,
+            pushTest: IsLein,
+        });
+
+        version.with({
+            name: "lein-version",
+            versioner: LeinProjectVersioner,
+            pushTest: IsLein,
+        });
+
+        dockerBuild.with({
+                name: "lein-docker-build",
+                imageNameCreator: imageNamer,
+                options: {
                     ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
                     dockerfileFinder: async () => "docker/Dockerfile",
-                }), { pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")) });
-
-        sdm.addAutofix(
-            {
-                name: "cljformat",
-                transform: async p => {
-                    await clj.cljfmt((p as GitProject).baseDir);
-                    return p;
                 },
-                pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
-            });
+                pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")),
+            })
+            .withProjectListener(Metajar);
+
+        autofix.with({
+            name: "cljformat",
+            transform: async p => {
+                await clj.cljfmt((p as GitProject).baseDir);
+                return p;
+            },
+            pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
+        });
     },
 };
 
-function leinDeployer(sdm: SoftwareDeliveryMachineOptions): ExecuteGoal {
-    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { credentials, id, context } = rwlc;
-        const version = await rwlcVersion(rwlc);
+const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
+    const { credentials, id, context, configuration } = rwlc;
+    const v = await rwlcVersion(rwlc);
 
-        return sdm.projectLoader.doWithProject({
+    return configuration.sdm.projectLoader.doWithProject({
             credentials,
             id,
             readOnly: false,
             context,
         },
-            async (project: GitProject) => {
-                const file = path.join(project.baseDir, "project.clj");
-                await clj.setVersion(file, version);
-                return spawnAndWatch({
-                    command: "lein",
-                    args: [
-                        "deploy",
-                    ],
-                }, await enrich({
-                    cwd: project.baseDir,
-                    env: process.env,
-                }, project), rwlc.progressLog);
-            },
-        );
-    };
-}
+        async (project: GitProject) => {
+            const file = path.join(project.baseDir, "project.clj");
+            await clj.setVersion(file, v);
+            return spawnAndWatch({
+                command: "lein",
+                args: [
+                    "deploy",
+                ],
+            }, await enrich({
+                cwd: project.baseDir,
+                env: process.env,
+            }, project), rwlc.progressLog);
+        },
+    );
+};
 
 /**
  * Add stuff from vault to env
@@ -182,45 +182,49 @@ async function enrich(options: SpawnOptions = {}, project: GitProject): Promise<
     return enriched;
 }
 
-function leinBuilder(sdm: SoftwareDeliveryMachine): Builder {
-    return new SpawnBuilder(
-        {
-            sdm,
-            options: {
-                name: "atomist.sh",
-                commands: [asSpawnCommand("./atomist.sh", { env: {} })],
-                errorFinder: (code, signal, l) => {
-                    return code !== 0;
-                },
-                logInterpreter: LogSuppressor,
-                enrich,
-                projectToAppInfo: async (p: GitProject) => {
-                    const projectClj = await p.findFile("project.clj");
-                    logger.info(`run projectToAppInfo in ${p.baseDir}/${projectClj.path}`);
-                    return {
-                        name: clj.getName(`${p.baseDir}/${projectClj.path}`),
-                        version: clj.getVersion(`${p.baseDir}/${projectClj.path}`),
-                        id: new GitHubRepoRef("owner", "repo"),
-                    };
-                },
+export const LeinBuilder = spawnBuilder(
+    {
+        name: "atomist.sh",
+        commands: [asSpawnCommand("./atomist.sh", { env: {} })],
+        errorFinder: (code, signal, l) => {
+            return code !== 0;
+        },
+        logInterpreter: LogSuppressor,
+        enrich,
+        projectToAppInfo: async (p: GitProject) => {
+            const projectClj = await p.findFile("project.clj");
+            logger.info(`run projectToAppInfo in ${p.baseDir}/${projectClj.path}`);
+            return {
+                name: clj.getName(`${p.baseDir}/${projectClj.path}`),
+                version: clj.getVersion(`${p.baseDir}/${projectClj.path}`),
+                id: new GitHubRepoRef("owner", "repo"),
+            };
+        },
+    },
+);
+
+export async function MetajarPreparation(p: GitProject, rwlc: GoalInvocation, event: GoalProjectListenerEvent): Promise<void | ExecuteGoalResult> {
+    if (event === GoalProjectListenerEvent.before) {
+        logger.info(`run ./metajar.sh from ${p.baseDir}`);
+        const result = await spawnAndWatch(
+            {
+                command: "./metajar.sh",
+                // args: ["with-profile", "metajar", "do", "clean,", "metajar"],
             },
-        });
+            await enrich({}, p),
+            rwlc.progressLog,
+            {
+                errorFinder: code => code !== 0,
+            });
+        return result;
+    }
 }
 
-export async function MetajarPreparation(p: GitProject, rwlc: GoalInvocation): Promise<ExecuteGoalResult> {
-    logger.info(`run ./metajar.sh from ${p.baseDir}`);
-    const result = await spawnAndWatch(
-        {
-            command: "./metajar.sh",
-            // args: ["with-profile", "metajar", "do", "clean,", "metajar"],
-        },
-        await enrich({}, p),
-        rwlc.progressLog,
-        {
-            errorFinder: code => code !== 0,
-        });
-    return result;
-}
+export const Metajar: GoalProjectListenerRegistration = {
+    name: "metajar",
+    pushTest: IsLein,
+    listener: MetajarPreparation,
+};
 
 export const LeinProjectVersioner: ProjectVersioner = async (status, p) => {
     const file = path.join(p.baseDir, "project.clj");
@@ -231,9 +235,9 @@ export const LeinProjectVersioner: ProjectVersioner = async (status, p) => {
     const branch = status.branch;
     // TODO - where did my defaultBranch go?
     const branchSuffix = branch !== "master" ? `${branch}.` : "";
-    const version = `${projectVersion}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
+    const v = `${projectVersion}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 
-    await clj.setVersion(file, version);
-    return version;
+    await clj.setVersion(file, v);
+    return v;
     // tslint:disable-next-line:max-file-line-count
 };

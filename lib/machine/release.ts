@@ -164,7 +164,7 @@ export function executeReleaseDocker(
     options?: DockerOptions,
 ): ExecuteGoal {
 
-    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
+    return async (rwlc: GoalInvocation) => {
         const { credentials, id, context } = rwlc;
         if (!options.registry) {
             throw new Error(`No registry defined in Docker options`);
@@ -173,7 +173,7 @@ export function executeReleaseDocker(
 
             for (const preparation of preparations) {
                 const pResult = await preparation(project, rwlc);
-                if (pResult.code !== 0) {
+                if (pResult && pResult.code !== 0) {
                     return pResult;
                 }
             }
