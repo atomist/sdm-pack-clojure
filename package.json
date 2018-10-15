@@ -20,8 +20,8 @@
     "url": "https://github.com/atomist/sdm-pack-clojure/issues"
   },
   "dependencies": {
-    "@atomist/sdm-pack-build": "1.0.0-master.20181010215848",
-    "@atomist/sdm-pack-docker": "1.0.0-master.20181011112818",
+    "@atomist/sdm-pack-build": "1.0.0-RC.1",
+    "@atomist/sdm-pack-docker": "1.0.0-RC.1",
     "dateformat": "^3.0.3",
     "lodash": "^4.17.10"
   },
@@ -32,10 +32,10 @@
     "@atomist/sdm-core": "*"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.0.0-master.20181010204819",
+    "@atomist/automation-client": "1.0.0-RC.1",
     "@atomist/clj-editors": "0.5.7",
-    "@atomist/sdm": "1.0.0-master.20181010145707",
-    "@atomist/sdm-core": "1.0.0-master.20181011053254",
+    "@atomist/sdm": "1.0.0-RC.1",
+    "@atomist/sdm-core": "1.0.0-RC.1",
     "@types/dateformat": "^1.0.1",
     "@types/lodash": "^4.14.116",
     "@types/mocha": "^2.2.48",
