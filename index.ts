@@ -15,7 +15,12 @@
  */
 
 export * from "./lib/machine/goals";
-export { LeinSupport } from "./lib/machine/leinSupport";
+export {
+    LeinSupport,
+    imageNamer,
+    LeinBuilder,
+    LeinProjectVersioner,
+} from "./lib/machine/leinSupport";
 export { MaterialChangeToClojureRepo } from "./lib/support/materialChangeToClojureRepo";
 export {
     IsClojure,

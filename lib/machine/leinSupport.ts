@@ -63,7 +63,7 @@ import {
 } from "./goals";
 import { rwlcVersion } from "./release";
 
-const imageNamer: DockerImageNameCreator =
+export const imageNamer: DockerImageNameCreator =
     async (p: GitProject,
            sdmGoal: SdmGoalEvent,
            options: DockerOptions,
