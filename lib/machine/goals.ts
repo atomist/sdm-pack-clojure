@@ -47,7 +47,7 @@ export const dockerBuild = new DockerBuild();
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
-    .plan(version);
+    .plan(version).after(autofix);
 
 export const DefaultBranchGoals: Goals = goals("Default Branch")
     .plan(autofix);
@@ -55,7 +55,7 @@ export const DefaultBranchGoals: Goals = goals("Default Branch")
 // Build including docker build
 export const LeinBuildGoals: Goals = goals("Lein Build")
     .plan(CheckGoals)
-    .plan(leinBuild).after(version, autofix);
+    .plan(leinBuild).after(version);
 
 export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
     .plan(DefaultBranchGoals, LeinBuildGoals)
