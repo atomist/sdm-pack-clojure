@@ -81,7 +81,7 @@ export const imageNamer: DockerImageNameCreator =
         return {
             name: projectName,
             registry: options.registry,
-            version: newversion,
+            tags: [newversion],
         };
     };
 
