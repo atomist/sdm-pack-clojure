@@ -35,10 +35,11 @@ const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>
 
 export function machineMaker(config: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
 
-    const sdm = createSoftwareDeliveryMachine({
-        name: `${configuration.name}-test`,
-        configuration: config,
-    },
+    const sdm = createSoftwareDeliveryMachine(
+        {
+            name: `${configuration.name}-test`,
+            configuration: config,
+        },
         whenPushSatisfies(IsLein)
             .itMeans("fingerprint a clojure project")
             .setGoals(LeinDefaultBranchBuildGoals));
