@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { PredicatePushTest } from "@atomist/sdm";
 import {
     hasFile,
     hasFileWithExtension,
+    PredicatePushTest,
 } from "@atomist/sdm";
 
 export const IsClojure: PredicatePushTest = hasFileWithExtension("clj");

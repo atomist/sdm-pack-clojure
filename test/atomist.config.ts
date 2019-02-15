@@ -19,9 +19,9 @@ import {
     pushTest,
     PushTest,
     SoftwareDeliveryMachine,
+    SoftwareDeliveryMachineConfiguration,
     whenPushSatisfies,
 } from "@atomist/sdm";
-import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,

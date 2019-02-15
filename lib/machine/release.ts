@@ -18,17 +18,15 @@
 
 import {
     ChildProcessResult,
+    configurationValue,
+    GitProject,
+    logger,
     spawnAndWatch,
     SpawnCommand,
-} from "@atomist/automation-client";
-import {
-    logger,
     Success,
-} from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client";
-import { configurationValue } from "@atomist/automation-client";
-import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm";
+ } from "@atomist/automation-client";
 import {
+    DelimitedWriteProgressLogDecorator,
     ExecuteGoal,
     ExecuteGoalResult,
     GoalInvocation,
@@ -47,7 +45,7 @@ interface ProjectRegistryInfo {
 }
 
 export async function rwlcVersion(gi: GoalInvocation): Promise<string> {
-    const sdmGoal = gi.sdmGoal;
+    const sdmGoal = gi.goalEvent;
     const version = await readSdmVersion(
         sdmGoal.repo.owner,
         sdmGoal.repo.name,
