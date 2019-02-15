@@ -24,7 +24,7 @@ import {
     spawnAndWatch,
     SpawnCommand,
     Success,
- } from "@atomist/automation-client";
+} from "@atomist/automation-client";
 import {
     DelimitedWriteProgressLogDecorator,
     ExecuteGoal,
