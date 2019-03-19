@@ -154,6 +154,7 @@ export const LeinSupport: ExtensionPack = {
                             ["with-profile", "-dev", "dependency-check","--throw"],
                             {
                                 log: new LoggingProgressLog("dependency-check"),
+                                cwd: project.baseDir
                             },
                         );        
                     }
@@ -174,7 +175,10 @@ export const LeinSupport: ExtensionPack = {
                     async (project: GitProject) => {
                         const result: ExecPromiseResult = await execPromise(
                             "lein",
-                            ["deps",":tree"],                
+                            ["deps",":tree"],
+                            {
+                                cwd: project.baseDir
+                            }           
                         );
         
                         if (result.stderr.includes("confusing")) {
