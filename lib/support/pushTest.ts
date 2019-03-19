@@ -15,23 +15,22 @@
  */
 
 import {
+    hasLeinPlugin,
+} from "@atomist/clj-editors";
+import {
     hasFile,
     hasFileWithExtension,
     PredicatePushTest,
     pushTest,
-    PushTest,
 } from "@atomist/sdm";
-import {
-    hasLeinPlugin,
-} from "@atomist/clj-editors";
 import * as path from "path";
 
 export const IsClojure: PredicatePushTest = hasFileWithExtension("clj");
 export const IsLein = hasFile("project.clj");
 
-export const HasLeinPlugin = function(symbol: string): PushTest {    
-    return pushTest("HasLeinPlugin", async (p) => {
-        const file = path.join(p.project.baseDir, "project.clj");            
-        return hasLeinPlugin(file,symbol);
+export const HasLeinPlugin = (symbol: string) => {
+    return pushTest("HasLeinPlugin", async p => {
+        const file = path.join(p.project.baseDir, "project.clj");
+        return hasLeinPlugin(file, symbol);
     });
-}
+};

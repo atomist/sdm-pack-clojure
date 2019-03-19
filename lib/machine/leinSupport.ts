@@ -146,20 +146,20 @@ export const LeinSupport: ExtensionPack = {
                 return rwlc.configuration.sdm.projectLoader.doWithProject(
                     {
                         ...rwlc,
-                        readOnly: true
+                        readOnly: true,
                     },
                     async (project: GitProject) => {
                         return spawnLog(
                             "lein",
-                            ["with-profile", "-dev", "dependency-check","--throw"],
+                            ["with-profile", "-dev", "dependency-check", "--throw"],
                             {
                                 log: new LoggingProgressLog("dependency-check"),
-                                cwd: project.baseDir
+                                cwd: project.baseDir,
                             },
-                        );        
-                    }
-                );                
-            }
+                        );
+                    },
+                );
+            },
         });
 
         confusingVersions.with({
@@ -170,24 +170,24 @@ export const LeinSupport: ExtensionPack = {
                 return rwlc.configuration.sdm.projectLoader.doWithProject(
                     {
                         ...rwlc,
-                        readOnly: true
+                        readOnly: true,
                     },
                     async (project: GitProject) => {
-                        
+
                         const result: ExecPromiseResult = await execPromise(
                             "lein",
-                            ["deps",":tree"],
+                            ["deps", ":tree"],
                             {
-                                cwd: project.baseDir
-                            }           
+                                cwd: project.baseDir,
+                            },
                         );
-                        
+
                         return {
-                            code: result.stderr.includes("confusion")?1:0,
+                            code: result.stderr.includes("confusion") ? 1 : 0,
                         };
-                    }
+                    },
                 );
-            }
+            },
         });
     },
 };
