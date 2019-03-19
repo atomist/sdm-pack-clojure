@@ -25,6 +25,8 @@ import {
 import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
+    execPromise,
+    ExecPromiseResult,
     ExecuteGoal,
     ExecuteGoalResult,
     ExtensionPack,
@@ -32,15 +34,13 @@ import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
     hasFile,
+    LoggingProgressLog,
     LogSuppressor,
     metadata,
     not,
     SdmGoalEvent,
-    ToDefaultBranch,
-    LoggingProgressLog,
     spawnLog,
-    execPromise,
-    ExecPromiseResult,
+    ToDefaultBranch,
 } from "@atomist/sdm";
 import {
     ProjectVersioner,
@@ -57,7 +57,10 @@ import * as df from "dateformat";
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
-import { IsLein, HasLeinPlugin } from "../support/pushTest";
+import {
+    HasLeinPlugin,
+    IsLein,
+} from "../support/pushTest";
 import {
     autofix,
     checkDependencies,
