@@ -163,7 +163,7 @@ export const LeinSupport: ExtensionPack = {
         });
 
         conflictingVersions.with({
-            name: "conflictingVersions",
+            name: "confusingVersions",
             pushTest: allSatisfied(IsLein),
             goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
 
@@ -173,6 +173,7 @@ export const LeinSupport: ExtensionPack = {
                         readOnly: true
                     },
                     async (project: GitProject) => {
+                        
                         const result: ExecPromiseResult = await execPromise(
                             "lein",
                             ["deps",":tree"],
@@ -180,18 +181,10 @@ export const LeinSupport: ExtensionPack = {
                                 cwd: project.baseDir
                             }           
                         );
-        
-                        if (result.stderr.includes("confusing")) {
-                            return {
-                                code: 1,
-                                message: "confusing dependencies found"
-                            }
-                        } else {
-                            return {
-                                code: 0,
-                                message: "fine"
-                            }
-                        }
+                        
+                        return {
+                            code: result.stderr.includes("confusion")?1:0,
+                        };
                     }
                 );
             }

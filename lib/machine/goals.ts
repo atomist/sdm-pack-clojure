@@ -47,8 +47,8 @@ export const conflictingVersions = new GoalWithFulfillment({
     displayName: "ConflictingVersion",
     orderedName: "1-conflictingVersions",
     environment: IndependentOfEnvironment,
-    workingDescription: "checking dependencies",
-    completedDescription: "check complete",
+    workingDescription: "checking for confusing dependencies",
+    completedDescription: "no confusing dependencies found",
     failedDescription: "project has conflicting dependencies",
 });
 export const checkDependencies = new GoalWithFulfillment({
@@ -56,8 +56,8 @@ export const checkDependencies = new GoalWithFulfillment({
     displayName: "CheckDependencies",
     orderedName: "2-checkDependencies",
     environment: IndependentOfEnvironment,
-    workingDescription: "checking dependencies",
-    completedDescription: "check complete",
+    workingDescription: "checking for owasp violations",
+    completedDescription: "owasp violation check passed",
     failedDescription: "project has violations",
 });
 
