@@ -42,12 +42,30 @@ export const leinBuild = new Build();
 export const autofix = new Autofix();
 export const version = new Version();
 export const tag = new Tag();
+export const conflictingVersions = new GoalWithFulfillment({
+    uniqueName: "ConflictingVersions",
+    displayName: "ConflictingVersion",
+    orderedName: "1-conflictingVersions",
+    environment: IndependentOfEnvironment,
+    workingDescription: "checking dependencies",
+    completedDescription: "check complete",
+    failedDescription: "project has conflicting dependencies",
+});
+export const checkDependencies = new GoalWithFulfillment({
+    uniqueName: "CheckDependencies",
+    displayName: "CheckDependencies",
+    orderedName: "2-checkDependencies",
+    environment: IndependentOfEnvironment,
+    workingDescription: "checking dependencies",
+    completedDescription: "check complete",
+    failedDescription: "project has violations",
+});
 
 export const dockerBuild = new DockerBuild();
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
-    .plan(version).after(autofix);
+    .plan(version, conflictingVersions, checkDependencies).after(autofix);
 
 export const DefaultBranchGoals: Goals = goals("Default Branch")
     .plan(autofix);

@@ -37,6 +37,10 @@ import {
     not,
     SdmGoalEvent,
     ToDefaultBranch,
+    LoggingProgressLog,
+    spawnLog,
+    execPromise,
+    ExecPromiseResult,
 } from "@atomist/sdm";
 import {
     ProjectVersioner,
@@ -53,9 +57,11 @@ import * as df from "dateformat";
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
-import { IsLein } from "../support/pushTest";
+import { IsLein, HasLeinPlugin } from "../support/pushTest";
 import {
     autofix,
+    checkDependencies,
+    conflictingVersions,
     dockerBuild,
     leinBuild,
     publish,
@@ -127,6 +133,61 @@ export const LeinSupport: ExtensionPack = {
                 return p;
             },
             pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
+        });
+
+        checkDependencies.with({
+            name: "checkDependencies",
+            pushTest: allSatisfied(IsLein, HasLeinPlugin("com.livingsocial/lein-dependency-check")),
+            goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
+
+                return rwlc.configuration.sdm.projectLoader.doWithProject(
+                    {
+                        ...rwlc,
+                        readOnly: true
+                    },
+                    async (project: GitProject) => {
+                        return spawnLog(
+                            "lein",
+                            ["with-profile", "-dev", "dependency-check","--throw"],
+                            {
+                                log: new LoggingProgressLog("dependency-check"),
+                            },
+                        );        
+                    }
+                );                
+            }
+        });
+
+        conflictingVersions.with({
+            name: "conflictingVersions",
+            pushTest: allSatisfied(IsLein),
+            goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
+
+                return rwlc.configuration.sdm.projectLoader.doWithProject(
+                    {
+                        ...rwlc,
+                        readOnly: true
+                    },
+                    async (project: GitProject) => {
+                        const result: ExecPromiseResult = await execPromise(
+                            "lein",
+                            ["deps",":tree"],                
+                        );
+        
+                        if (result.stderr.includes("confusing")) {
+                            return {
+                                code: 1,
+                                message: "confusing dependencies found"
+                            }
+                        } else {
+                            return {
+                                code: 0,
+                                message: "fine"
+                            }
+                        }
+                    }
+                );
+            }
         });
     },
 };
