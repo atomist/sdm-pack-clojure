@@ -39,6 +39,7 @@
     "@atomist/sdm-pack-build": "1.0.4-master.20181217220011",
     "@atomist/sdm-pack-docker": "1.1.0-master.20190213113315",
     "@atomist/slack-messages": "1.1.0-master.20181115202354",
+    "@atomist/sdm-local": "^1.0.5",
     "@types/dateformat": "^1.0.1",
     "@types/lodash": "^4.14.116",
     "@types/mocha": "^2.2.48",
