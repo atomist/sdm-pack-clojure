@@ -42,10 +42,10 @@ export const leinBuild = new Build();
 export const autofix = new Autofix();
 export const version = new Version();
 export const tag = new Tag();
-export const conflictingVersions = new GoalWithFulfillment({
-    uniqueName: "ConflictingVersions",
-    displayName: "ConflictingVersion",
-    orderedName: "1-conflictingVersions",
+export const confusingVersions = new GoalWithFulfillment({
+    uniqueName: "ConfusingVersions",
+    displayName: "ConfusingVersions",
+    orderedName: "1-confusingVersions",
     environment: IndependentOfEnvironment,
     workingDescription: "checking for confusing dependencies",
     completedDescription: "no confusing dependencies found",
@@ -59,13 +59,14 @@ export const checkDependencies = new GoalWithFulfillment({
     workingDescription: "checking for owasp violations",
     completedDescription: "owasp violation check passed",
     failedDescription: "project has violations",
+    skippedDescription: "OWasp scanning not available",
 });
 
 export const dockerBuild = new DockerBuild();
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
-    .plan(version, conflictingVersions, checkDependencies).after(autofix);
+    .plan(version, confusingVersions, checkDependencies).after(autofix);
 
 export const DefaultBranchGoals: Goals = goals("Default Branch")
     .plan(autofix);
@@ -73,7 +74,7 @@ export const DefaultBranchGoals: Goals = goals("Default Branch")
 // Build including docker build
 export const LeinBuildGoals: Goals = goals("Lein Build")
     .plan(CheckGoals)
-    .plan(leinBuild).after(version);
+    .plan(leinBuild).after(CheckGoals);
 
 export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
     .plan(DefaultBranchGoals, LeinBuildGoals)

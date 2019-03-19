@@ -64,7 +64,7 @@ import {
 import {
     autofix,
     checkDependencies,
-    conflictingVersions,
+    confusingVersions,
     dockerBuild,
     leinBuild,
     publish,
@@ -162,7 +162,7 @@ export const LeinSupport: ExtensionPack = {
             }
         });
 
-        conflictingVersions.with({
+        confusingVersions.with({
             name: "confusingVersions",
             pushTest: allSatisfied(IsLein),
             goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
