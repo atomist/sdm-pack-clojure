@@ -58,7 +58,6 @@ import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import {
-    HasLeinPlugin,
     IsLein,
 } from "../support/pushTest";
 import {
