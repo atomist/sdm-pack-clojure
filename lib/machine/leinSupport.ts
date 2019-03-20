@@ -149,9 +149,9 @@ export const LeinSupport: ExtensionPack = {
                         readOnly: true,
                     },
                     async (project: GitProject) => {
-                        
+
                         const spawnOptions = await enrich({}, project);
-        
+
                         return spawnLog(
                             "lein",
                             ["with-profile", "-dev", "dependency-check", "--throw"],
