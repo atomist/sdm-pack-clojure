@@ -149,10 +149,14 @@ export const LeinSupport: ExtensionPack = {
                         readOnly: true,
                     },
                     async (project: GitProject) => {
+                        
+                        const spawnOptions = await enrich({}, project);
+        
                         return spawnLog(
                             "lein",
                             ["with-profile", "-dev", "dependency-check", "--throw"],
                             {
+                                ...spawnOptions,
                                 log: new LoggingProgressLog("dependency-check"),
                                 cwd: project.baseDir,
                             },
@@ -174,10 +178,13 @@ export const LeinSupport: ExtensionPack = {
                     },
                     async (project: GitProject) => {
 
+                        const spawnOptions = await enrich({}, project);
+
                         const result: ExecPromiseResult = await execPromise(
                             "lein",
                             ["deps", ":tree"],
                             {
+                                ...spawnOptions,
                                 cwd: project.baseDir,
                             },
                         );
