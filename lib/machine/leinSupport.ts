@@ -140,7 +140,7 @@ export const LeinSupport: ExtensionPack = {
 
         checkDependencies.with({
             name: "checkDependencies",
-            pushTest: allSatisfied(IsLein, HasLeinPlugin("com.livingsocial/lein-dependency-check")),
+            pushTest: allSatisfied(IsLein),
             goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
 
                 return rwlc.configuration.sdm.projectLoader.doWithProject(

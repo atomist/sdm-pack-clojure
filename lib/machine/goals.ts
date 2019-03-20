@@ -66,7 +66,7 @@ export const dockerBuild = new DockerBuild();
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
-    .plan(version, confusingVersions, checkDependencies).after(autofix);
+    .plan(version, confusingVersions).after(autofix);
 
 export const DefaultBranchGoals: Goals = goals("Default Branch")
     .plan(autofix);
