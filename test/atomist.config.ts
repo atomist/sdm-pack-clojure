@@ -16,8 +16,8 @@
 
 import { Configuration } from "@atomist/automation-client";
 import {
-    Goals,
     goals,
+    Goals,
     pushTest,
     PushTest,
     SoftwareDeliveryMachine,
@@ -29,7 +29,14 @@ import {
     createSoftwareDeliveryMachine,
 } from "@atomist/sdm-core";
 import { LeinSupport } from "..";
-import { autofix, checkDependencies, confusingVersions, dockerBuild, leinBuild, version } from "../lib/machine/goals";
+import {
+    autofix,
+    checkDependencies,
+    confusingVersions,
+    dockerBuild,
+    leinBuild,
+    version,
+} from "../lib/machine/goals";
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
