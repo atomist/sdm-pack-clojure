@@ -16,20 +16,20 @@
 
 import { Configuration } from "@atomist/automation-client";
 import {
+    Goals,
+    goals,
     pushTest,
     PushTest,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
     whenPushSatisfies,
-    Goals,
-    goals,
 } from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,
 } from "@atomist/sdm-core";
 import { LeinSupport } from "..";
-import { version, confusingVersions, checkDependencies, autofix, leinBuild, dockerBuild } from "../lib/machine/goals";
+import { autofix, checkDependencies, confusingVersions, dockerBuild, leinBuild, version } from "../lib/machine/goals";
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
@@ -45,7 +45,7 @@ export const LeinBuildGoals: Goals = goals("Lein Build")
 
 export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
     .plan(DefaultBranchGoals, LeinBuildGoals)
-    //.plan(publish).after(leinBuild)
+    // .plan(publish).after(leinBuild)
     .plan(dockerBuild).after(leinBuild);
 
 const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>

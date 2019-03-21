@@ -218,11 +218,11 @@ const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteG
                     ...await enrich({
                         cwd: project.baseDir,
                         env: process.env,
-                        }, 
-                        project
+                        },
+                        project,
                     ),
                     log: rwlc.progressLog,
-                }
+                },
             );
         },
     );
@@ -283,7 +283,7 @@ export async function MetajarPreparation(p: GitProject, rwlc: GoalInvocation, ev
             {
                 ...await enrich({}, p),
                 log: rwlc.progressLog,
-            }
+            },
         );
         return result;
     }
