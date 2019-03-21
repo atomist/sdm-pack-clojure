@@ -16,8 +16,6 @@
 
 import {
     Autofix,
-    goals,
-    Goals,
     GoalWithFulfillment,
     IndependentOfEnvironment,
 } from "@atomist/sdm";
@@ -63,25 +61,3 @@ export const checkDependencies = new GoalWithFulfillment({
 });
 
 export const dockerBuild = new DockerBuild();
-
-// Just running review and autofix
-export const CheckGoals: Goals = goals("Check")
-    .plan(version, confusingVersions).after(autofix);
-
-export const DefaultBranchGoals: Goals = goals("Default Branch")
-    .plan(autofix);
-
-// Build including docker build
-export const LeinBuildGoals: Goals = goals("Lein Build")
-    .plan(CheckGoals)
-    .plan(leinBuild).after(CheckGoals);
-
-export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
-    .plan(DefaultBranchGoals, LeinBuildGoals)
-    .plan(publish).after(leinBuild)
-    .plan(tag).after(publish);
-
-export const LeinDockerGoals: Goals = goals("Lein Docker Build")
-    .plan(LeinBuildGoals)
-    .plan(dockerBuild).after(leinBuild)
-    .plan(tag).after(dockerBuild);

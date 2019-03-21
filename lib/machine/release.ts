@@ -17,12 +17,9 @@
 // tslint:disable:max-file-line-count
 
 import {
-    ChildProcessResult,
     configurationValue,
     GitProject,
     logger,
-    spawnAndWatch,
-    SpawnCommand,
     Success,
 } from "@atomist/automation-client";
 import {
@@ -33,10 +30,11 @@ import {
     PrepareForGoalExecution,
     ProgressLog,
     ProjectLoader,
+    SpawnLogOptions,
+    spawnLog,
 } from "@atomist/sdm";
 import { readSdmVersion } from "@atomist/sdm-core";
 import { DockerOptions } from "@atomist/sdm-pack-docker";
-import { SpawnOptions } from "child_process";
 
 interface ProjectRegistryInfo {
     registry: string;
@@ -67,7 +65,10 @@ function dockerImage(p: ProjectRegistryInfo): string {
 type ExecuteLogger = (l: ProgressLog) => Promise<ExecuteGoalResult>;
 
 interface SpawnWatchCommand {
-    cmd: SpawnCommand;
+    cmd: {
+        command: string,
+        args: string[],
+    };
     cwd?: string;
 }
 
@@ -82,23 +83,15 @@ interface SpawnWatchCommand {
 function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
 
     return async (log: ProgressLog) => {
-        const opts: SpawnOptions = {
-            ...swc.cmd.options,
-        };
+
+        const opts: SpawnLogOptions = {log};
+
         if (swc.cwd) {
             opts.cwd = swc.cwd;
         }
-        let res: ChildProcessResult;
-        try {
-            res = await spawnAndWatch(swc.cmd, opts, log);
-        } catch (e) {
-            res = {
-                error: true,
-                code: -1,
-                message: `Spawned command errored: ${swc.cmd.command} ${swc.cmd.args.join(" ")}: ${e.message}`,
-                childProcess: res.childProcess,
-            };
-        }
+
+        const res = await spawnLog(swc.cmd.command, swc.cmd.args, opts);
+
         if (res.error) {
             if (!res.message) {
                 res.message = `Spawned command failed (status:${res.code}): ${swc.cmd.command} ${swc.cmd.args.join(" ")}`;
@@ -106,6 +99,7 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
             logger.error(res.message);
             log.write(res.message);
         }
+
         return res;
     };
 }

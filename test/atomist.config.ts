@@ -21,13 +21,32 @@ import {
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
     whenPushSatisfies,
+    Goals,
+    goals,
 } from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,
 } from "@atomist/sdm-core";
 import { LeinSupport } from "..";
-import { LeinDefaultBranchBuildGoals } from "../lib/machine/goals";
+import { version, confusingVersions, checkDependencies, autofix, leinBuild, dockerBuild } from "../lib/machine/goals";
+
+// Just running review and autofix
+export const CheckGoals: Goals = goals("Check")
+    .plan(version, confusingVersions, checkDependencies).after(autofix);
+
+export const DefaultBranchGoals: Goals = goals("Default Branch")
+    .plan(autofix);
+
+// Build including docker build
+export const LeinBuildGoals: Goals = goals("Lein Build")
+    .plan(CheckGoals)
+    .plan(leinBuild).after(version);
+
+export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
+    .plan(DefaultBranchGoals, LeinBuildGoals)
+    //.plan(publish).after(leinBuild)
+    .plan(dockerBuild).after(leinBuild);
 
 const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>
     !!(await pci.project.getFile("project.clj")),

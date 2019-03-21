@@ -20,7 +20,6 @@ import {
     GitProject,
     HandlerContext,
     logger,
-    spawnAndWatch,
 } from "@atomist/automation-client";
 import * as clj from "@atomist/clj-editors";
 import {
@@ -211,15 +210,20 @@ const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteG
         async (project: GitProject) => {
             const file = path.join(project.baseDir, "project.clj");
             await clj.setVersion(file, v);
-            return spawnAndWatch({
-                command: "lein",
-                args: [
-                    "deploy",
-                ],
-            }, await enrich({
-                cwd: project.baseDir,
-                env: process.env,
-            }, project), rwlc.progressLog);
+
+            return spawnLog(
+                "lein",
+                ["deploy"],
+                {
+                    ...await enrich({
+                        cwd: project.baseDir,
+                        env: process.env,
+                        }, 
+                        project
+                    ),
+                    log: rwlc.progressLog,
+                }
+            );
         },
     );
 };
@@ -273,16 +277,14 @@ export const LeinBuilder = spawnBuilder(
 export async function MetajarPreparation(p: GitProject, rwlc: GoalInvocation, event: GoalProjectListenerEvent): Promise<void | ExecuteGoalResult> {
     if (event === GoalProjectListenerEvent.before) {
         logger.info(`run ./metajar.sh from ${p.baseDir}`);
-        const result = await spawnAndWatch(
+        const result = spawnLog(
+            "./metajar.sh",
+            [],
             {
-                command: "./metajar.sh",
-                // args: ["with-profile", "metajar", "do", "clean,", "metajar"],
-            },
-            await enrich({}, p),
-            rwlc.progressLog,
-            {
-                errorFinder: code => code !== 0,
-            });
+                ...await enrich({}, p),
+                log: rwlc.progressLog,
+            }
+        );
         return result;
     }
 }
