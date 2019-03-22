@@ -63,7 +63,10 @@ import {
     publish,
     version,
 } from "./goals";
-import { runConfusingDependenciesCheck, runDependencyCheckOnProject } from "./inspection";
+import {
+    runConfusingDependenciesCheck,
+    runDependencyCheckOnProject,
+} from "./inspection";
 import { rwlcVersion } from "./release";
 
 export const imageNamer: DockerImageNameCreator =

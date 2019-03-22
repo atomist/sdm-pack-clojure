@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-import { GitProject, NoParameters, Project, ProjectReview } from "@atomist/automation-client";
-import { CodeInspection, execPromise, ExecPromiseResult, LoggingProgressLog, spawnLog, SpawnLogResult } from "@atomist/sdm";
+import {
+    GitProject,
+    NoParameters,
+    Project,
+    ProjectReview,
+} from "@atomist/automation-client";
+import {
+    CodeInspection,
+    execPromise,
+    ExecPromiseResult,
+    LoggingProgressLog,
+    spawnLog,
+    SpawnLogResult,
+} from "@atomist/sdm";
 import { enrich } from "./enrich";
 
 export function runDependencyCheckOnProject(): CodeInspection<ProjectReview, NoParameters> {

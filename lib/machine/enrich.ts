@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { GitProject, logger } from "@atomist/automation-client";
+import {
+    GitProject,
+    logger,
+} from "@atomist/automation-client";
 import * as clj from "@atomist/clj-editors";
 import { SpawnOptions } from "child_process";
 import * as fs from "fs";
