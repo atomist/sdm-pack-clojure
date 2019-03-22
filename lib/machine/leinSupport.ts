@@ -24,8 +24,6 @@ import {
 import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
-    execPromise,
-    ExecPromiseResult,
     ExecuteGoal,
     ExecuteGoalResult,
     ExtensionPack,
@@ -33,7 +31,6 @@ import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
     hasFile,
-    LoggingProgressLog,
     LogSuppressor,
     metadata,
     not,
@@ -51,23 +48,22 @@ import {
     DockerOptions,
 } from "@atomist/sdm-pack-docker";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
-import { SpawnOptions } from "child_process";
 import * as df from "dateformat";
-import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import {
     IsLein,
 } from "../support/pushTest";
+import { enrich } from "./enrich";
 import {
+    autoCodeInspection,
     autofix,
-    checkDependencies,
-    confusingVersions,
     dockerBuild,
     leinBuild,
     publish,
     version,
 } from "./goals";
+import { runConfusingDependenciesCheck, runDependencyCheckOnProject } from "./inspection";
 import { rwlcVersion } from "./release";
 
 export const imageNamer: DockerImageNameCreator =
@@ -136,63 +132,12 @@ export const LeinSupport: ExtensionPack = {
             pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
         });
 
-        checkDependencies.with({
-            name: "checkDependencies",
-            pushTest: allSatisfied(IsLein),
-            goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
-
-                return rwlc.configuration.sdm.projectLoader.doWithProject(
-                    {
-                        ...rwlc,
-                        readOnly: true,
-                    },
-                    async (project: GitProject) => {
-
-                        const spawnOptions = await enrich({}, project);
-
-                        return spawnLog(
-                            "lein",
-                            ["with-profile", "-dev", "dependency-check", "--throw"],
-                            {
-                                ...spawnOptions,
-                                log: new LoggingProgressLog("dependency-check"),
-                                cwd: project.baseDir,
-                            },
-                        );
-                    },
-                );
-            },
-        });
-
-        confusingVersions.with({
-            name: "confusingVersions",
-            pushTest: allSatisfied(IsLein),
-            goalExecutor: async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
-
-                return rwlc.configuration.sdm.projectLoader.doWithProject(
-                    {
-                        ...rwlc,
-                        readOnly: true,
-                    },
-                    async (project: GitProject) => {
-
-                        const spawnOptions = await enrich({}, project);
-
-                        const result: ExecPromiseResult = await execPromise(
-                            "lein",
-                            ["deps", ":tree"],
-                            {
-                                ...spawnOptions,
-                                cwd: project.baseDir,
-                            },
-                        );
-
-                        return {
-                            code: result.stderr.includes("confusion") ? 1 : 0,
-                        };
-                    },
-                );
-            },
+        autoCodeInspection.with({
+            name: "OWASP Dependency analysis",
+            inspection: runDependencyCheckOnProject(),
+        }).with({
+            name: "Confusing Dependencies",
+            inspection: runConfusingDependenciesCheck(),
         });
     },
 };
@@ -218,40 +163,15 @@ const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteG
                     ...await enrich({
                         cwd: project.baseDir,
                         env: process.env,
-                        }, 
-                        project
+                        },
+                        project,
                     ),
                     log: rwlc.progressLog,
-                }
+                },
             );
         },
     );
 };
-
-/**
- * Add stuff from vault to env
- * @param options original options
- * @param project optional project
- */
-export async function enrich(options: SpawnOptions = {}, project: GitProject): Promise<SpawnOptions> {
-    const key = process.env.TEAM_CRED;
-    const vault = path.join(fs.realpathSync(__dirname), "../resources/vault.txt");
-    const defaultEncryptedEnv = { env: clj.vault(key, vault) };
-    let encryptedEnv = {};
-    try {
-        encryptedEnv = { env: clj.vault(key, `${project.baseDir}/vault.txt`) };
-    } catch {
-        logger.info("no local encryptedEnv");
-    }
-    if (!options.cwd) {
-        options.cwd = project.baseDir;
-    }
-    if (!options.env) {
-        options.env = process.env;
-    }
-    const enriched = _.merge(options, defaultEncryptedEnv, encryptedEnv) as SpawnOptions;
-    return enriched;
-}
 
 export const LeinBuilder = spawnBuilder(
     {
@@ -283,7 +203,7 @@ export async function MetajarPreparation(p: GitProject, rwlc: GoalInvocation, ev
             {
                 ...await enrich({}, p),
                 log: rwlc.progressLog,
-            }
+            },
         );
         return result;
     }

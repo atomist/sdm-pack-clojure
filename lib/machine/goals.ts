@@ -15,6 +15,7 @@
  */
 
 import {
+    AutoCodeInspection,
     Autofix,
     GoalWithFulfillment,
     IndependentOfEnvironment,
@@ -26,6 +27,13 @@ import {
 import { Build } from "@atomist/sdm-pack-build";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 
+export const leinBuild = new Build();
+export const autofix = new Autofix();
+export const version = new Version();
+export const tag = new Tag();
+export const autoCodeInspection = new AutoCodeInspection({ isolate: true });
+export const dockerBuild = new DockerBuild();
+
 export const publish = new GoalWithFulfillment({
     uniqueName: "Publish",
     environment: IndependentOfEnvironment,
@@ -36,10 +44,6 @@ export const publish = new GoalWithFulfillment({
     failedDescription: "Published failed",
 });
 
-export const leinBuild = new Build();
-export const autofix = new Autofix();
-export const version = new Version();
-export const tag = new Tag();
 export const confusingVersions = new GoalWithFulfillment({
     uniqueName: "ConfusingVersions",
     displayName: "ConfusingVersions",
@@ -59,5 +63,3 @@ export const checkDependencies = new GoalWithFulfillment({
     failedDescription: "project has violations",
     skippedDescription: "OWasp scanning not available",
 });
-
-export const dockerBuild = new DockerBuild();

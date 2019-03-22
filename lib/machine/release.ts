@@ -30,8 +30,8 @@ import {
     PrepareForGoalExecution,
     ProgressLog,
     ProjectLoader,
-    SpawnLogOptions,
     spawnLog,
+    SpawnLogOptions,
 } from "@atomist/sdm";
 import { readSdmVersion } from "@atomist/sdm-core";
 import { DockerOptions } from "@atomist/sdm-pack-docker";
