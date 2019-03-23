@@ -16,8 +16,8 @@
 
 import { Configuration } from "@atomist/automation-client";
 import {
-    Goals,
     goals,
+    Goals,
     pushTest,
     PushTest,
     SoftwareDeliveryMachine,
