@@ -34,7 +34,10 @@ import {
     Version,
 } from "@atomist/sdm-core";
 import { leinSupport } from "..";
-import { dockerBuild, leinBuild } from "../lib/machine/goals";
+import {
+    dockerBuild,
+    leinBuild,
+} from "../lib/machine/goals";
 
 const version = new Version();
 const autoCodeInspection = new AutoCodeInspection({ isolate: true });
