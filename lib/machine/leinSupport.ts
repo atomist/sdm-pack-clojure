@@ -46,9 +46,9 @@ import {
 } from "@atomist/sdm-core";
 import { spawnBuilder } from "@atomist/sdm-pack-build";
 import {
+    DockerBuild,
     DockerImageNameCreator,
     DockerOptions,
-    DockerBuild,
 } from "@atomist/sdm-pack-docker";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
@@ -70,9 +70,9 @@ import { rwlcVersion } from "./release";
 
 export const imageNamer: DockerImageNameCreator =
     async (p: GitProject,
-        sdmGoal: SdmGoalEvent,
-        options: DockerOptions,
-        ctx: HandlerContext) => {
+           sdmGoal: SdmGoalEvent,
+           options: DockerOptions,
+           ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
@@ -148,7 +148,7 @@ export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
                 inspection: runConfusingDependenciesCheck(),
             });
         },
-    }
+    };
 }
 
 const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
