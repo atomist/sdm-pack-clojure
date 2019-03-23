@@ -16,7 +16,7 @@
 
 export * from "./lib/machine/goals";
 export {
-    LeinSupport,
+    leinSupport,
     imageNamer,
     LeinBuilder,
     LeinProjectVersioner,

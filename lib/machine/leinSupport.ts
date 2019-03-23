@@ -37,15 +37,18 @@ import {
     SdmGoalEvent,
     spawnLog,
     ToDefaultBranch,
+    WellKnownGoals,
 } from "@atomist/sdm";
 import {
     ProjectVersioner,
     readSdmVersion,
+    Version,
 } from "@atomist/sdm-core";
 import { spawnBuilder } from "@atomist/sdm-pack-build";
 import {
     DockerImageNameCreator,
     DockerOptions,
+    DockerBuild,
 } from "@atomist/sdm-pack-docker";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
@@ -56,21 +59,17 @@ import {
 } from "../support/pushTest";
 import { enrich } from "./enrich";
 import {
-    autoCodeInspection,
-    autofix,
-    dockerBuild,
     leinBuild,
     publish,
-    version,
 } from "./goals";
 import { runConfusingDependenciesCheck, runDependencyCheckOnProject } from "./inspection";
 import { rwlcVersion } from "./release";
 
 export const imageNamer: DockerImageNameCreator =
     async (p: GitProject,
-           sdmGoal: SdmGoalEvent,
-           options: DockerOptions,
-           ctx: HandlerContext) => {
+        sdmGoal: SdmGoalEvent,
+        options: DockerOptions,
+        ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
@@ -88,31 +87,37 @@ export const imageNamer: DockerImageNameCreator =
         };
     };
 
-export const LeinSupport: ExtensionPack = {
-    ...metadata(),
-    configure: sdm => {
+export interface LeinSupportOptions extends WellKnownGoals {
+    version?: Version;
+    dockerBuild?: DockerBuild;
+}
 
-        leinBuild.with(
-            {
-                name: "Lein build",
-                builder: LeinBuilder,
+export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
+    return {
+        ...metadata(),
+        configure: sdm => {
+
+            leinBuild.with(
+                {
+                    name: "Lein build",
+                    builder: LeinBuilder,
+                    pushTest: IsLein,
+                },
+            );
+
+            publish.with({
+                name: "deploy-jar",
+                goalExecutor: LeinDeployer,
                 pushTest: IsLein,
-            },
-        );
+            });
 
-        publish.with({
-            name: "deploy-jar",
-            goalExecutor: LeinDeployer,
-            pushTest: IsLein,
-        });
+            goals.version.with({
+                name: "lein-version",
+                versioner: LeinProjectVersioner,
+                pushTest: IsLein,
+            });
 
-        version.with({
-            name: "lein-version",
-            versioner: LeinProjectVersioner,
-            pushTest: IsLein,
-        });
-
-        dockerBuild.with({
+            goals.dockerBuild.with({
                 name: "lein-docker-build",
                 imageNameCreator: imageNamer,
                 options: {
@@ -121,37 +126,38 @@ export const LeinSupport: ExtensionPack = {
                 },
                 pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")),
             })
-            .withProjectListener(Metajar);
+                .withProjectListener(Metajar);
 
-        autofix.with({
-            name: "cljformat",
-            transform: async p => {
-                await clj.cljfmt((p as GitProject).baseDir);
-                return p;
-            },
-            pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
-        });
+            goals.autofixGoal.with({
+                name: "cljformat",
+                transform: async p => {
+                    await clj.cljfmt((p as GitProject).baseDir);
+                    return p;
+                },
+                pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
+            });
 
-        autoCodeInspection.with({
-            name: "OWASP Dependency analysis",
-            inspection: runDependencyCheckOnProject(),
-        }).with({
-            name: "Confusing Dependencies",
-            inspection: runConfusingDependenciesCheck(),
-        });
-    },
-};
+            goals.inspectGoal.with({
+                name: "OWASP Dependency analysis",
+                inspection: runDependencyCheckOnProject(),
+            }).with({
+                name: "Confusing Dependencies",
+                inspection: runConfusingDependenciesCheck(),
+            });
+        },
+    }
+}
 
 const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
     const { credentials, id, context, configuration } = rwlc;
     const v = await rwlcVersion(rwlc);
 
     return configuration.sdm.projectLoader.doWithProject({
-            credentials,
-            id,
-            readOnly: false,
-            context,
-        },
+        credentials,
+        id,
+        readOnly: false,
+        context,
+    },
         async (project: GitProject) => {
             const file = path.join(project.baseDir, "project.clj");
             await clj.setVersion(file, v);
@@ -163,7 +169,7 @@ const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteG
                     ...await enrich({
                         cwd: project.baseDir,
                         env: process.env,
-                        },
+                    },
                         project,
                     ),
                     log: rwlc.progressLog,

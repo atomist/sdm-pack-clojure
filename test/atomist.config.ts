@@ -23,13 +23,22 @@ import {
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
     whenPushSatisfies,
+    AutoCodeInspection,
+    Autofix,
+    ApproveGoalIfErrorComments,
+    ApproveGoalIfWarnComments,
 } from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,
+    Version,
 } from "@atomist/sdm-core";
-import { LeinSupport } from "..";
-import { autoCodeInspection, autofix, dockerBuild, leinBuild, version } from "../lib/machine/goals";
+import { dockerBuild, leinBuild } from "../lib/machine/goals";
+import { leinSupport } from "..";
+
+const version = new Version();
+const autoCodeInspection = new AutoCodeInspection({ isolate: true });
+const autofix = new Autofix();
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
@@ -63,7 +72,16 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
             .itMeans("fingerprint a clojure project")
             .setGoals(LeinDefaultBranchBuildGoals));
 
-    sdm.addExtensionPacks(LeinSupport);
+    sdm.addExtensionPacks(leinSupport({
+        dockerBuild,
+        version,
+        autofixGoal: autofix,
+        inspectGoal: autoCodeInspection,
+    }));
+
+    autoCodeInspection
+        .withListener(ApproveGoalIfErrorComments)
+        .withListener(ApproveGoalIfWarnComments);
 
     return sdm;
 }

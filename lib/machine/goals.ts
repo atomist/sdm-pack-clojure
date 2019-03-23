@@ -15,23 +15,13 @@
  */
 
 import {
-    AutoCodeInspection,
-    Autofix,
     GoalWithFulfillment,
     IndependentOfEnvironment,
 } from "@atomist/sdm";
-import {
-    Tag,
-    Version,
-} from "@atomist/sdm-core";
 import { Build } from "@atomist/sdm-pack-build";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 
 export const leinBuild = new Build();
-export const autofix = new Autofix();
-export const version = new Version();
-export const tag = new Tag();
-export const autoCodeInspection = new AutoCodeInspection({ isolate: true });
 export const dockerBuild = new DockerBuild();
 
 export const publish = new GoalWithFulfillment({
@@ -42,24 +32,4 @@ export const publish = new GoalWithFulfillment({
     workingDescription: "Publishing...",
     completedDescription: "Published",
     failedDescription: "Published failed",
-});
-
-export const confusingVersions = new GoalWithFulfillment({
-    uniqueName: "ConfusingVersions",
-    displayName: "ConfusingVersions",
-    orderedName: "1-confusingVersions",
-    environment: IndependentOfEnvironment,
-    workingDescription: "checking for confusing dependencies",
-    completedDescription: "no confusing dependencies found",
-    failedDescription: "project has conflicting dependencies",
-});
-export const checkDependencies = new GoalWithFulfillment({
-    uniqueName: "CheckDependencies",
-    displayName: "CheckDependencies",
-    orderedName: "2-checkDependencies",
-    environment: IndependentOfEnvironment,
-    workingDescription: "checking for owasp violations",
-    completedDescription: "owasp violation check passed",
-    failedDescription: "project has violations",
-    skippedDescription: "OWasp scanning not available",
 });

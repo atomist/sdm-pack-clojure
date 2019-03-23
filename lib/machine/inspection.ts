@@ -55,7 +55,7 @@ export function runConfusingDependenciesCheck(): CodeInspection<ProjectReview, N
             },
         );
 
-        if (result.stderr.includes("confusion")) {
+        if (result.stderr.includes("confusing")) {
             review.comments.push({
                 severity: "error",
                 detail: result.stderr,
