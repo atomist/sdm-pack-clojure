@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/atomist-sdm/compare/1.0.9...HEAD)
 
+### Changed
+
+-   Rework to use spawnLog and errorFinder. [#12](https://github.com/atomist/sdm-pack-clojure/issues/12)
+
 ## [1.0.9](https://github.com/atomist/atomist-sdm/compare/1.0.8...1.0.9) - 2019-03-26
 
 ## [1.0.8](https://github.com/atomist/atomist-sdm/compare/1.0.7...1.0.8) - 2019-03-23
