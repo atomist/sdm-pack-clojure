@@ -1,6 +1,6 @@
 {
   "name": "@atomist/sdm-pack-clojure",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "an Atomist SDM pack for Clojure projects",
   "author": "Atomist, Inc.",
   "license": "Apache-2.0",

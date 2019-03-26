@@ -16,6 +16,10 @@
 
 import { Configuration } from "@atomist/automation-client";
 import {
+    ApproveGoalIfErrorComments,
+    ApproveGoalIfWarnComments,
+    AutoCodeInspection,
+    Autofix,
     goals,
     Goals,
     pushTest,
@@ -23,18 +27,17 @@ import {
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
     whenPushSatisfies,
-    AutoCodeInspection,
-    Autofix,
-    ApproveGoalIfErrorComments,
-    ApproveGoalIfWarnComments,
 } from "@atomist/sdm";
 import {
     configureSdm,
     createSoftwareDeliveryMachine,
     Version,
 } from "@atomist/sdm-core";
-import { dockerBuild, leinBuild } from "../lib/machine/goals";
 import { leinSupport } from "..";
+import {
+    dockerBuild,
+    leinBuild,
+} from "../lib/machine/goals";
 
 const version = new Version();
 const autoCodeInspection = new AutoCodeInspection({ isolate: true });
