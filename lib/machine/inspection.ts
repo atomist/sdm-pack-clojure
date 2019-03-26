@@ -24,20 +24,19 @@ import {
 } from "@atomist/automation-client";
 import {
     CodeInspection,
-    execPromise,
-    ExecPromiseResult,
     LoggingProgressLog,
     spawnLog,
     SpawnLogResult,
+    StringCapturingProgressLog,
 } from "@atomist/sdm";
-import { enrich } from "./enrich";
 import * as _ from "lodash";
+import { enrich } from "./enrich";
 
 function checkVulnerabilites(f: ProjectFile): boolean {
     try {
         const report = JSON.parse(f.getContentSync());
-        logger.info(`check for vulnerabilities: ${_.some(_.get(report, "dependencies"), 'vulnerabilities')}`);
-        logger.info(`length of vulnerabilities vector ${_.concat(_.map(_.filter(_.get(report, "dependencies"), 'vulnerabilities'), 'vulnerabilities')).length}`);
+        logger.info(`check for vulnerabilities: ${_.some(_.get(report, "dependencies"), "vulnerabilities")}`);
+        logger.info(`length of vulnerabilities vector ${_.concat(_.map(_.filter(_.get(report, "dependencies"), "vulnerabilities"), "vulnerabilities")).length}`);
     } catch (e) {
         logger.error(e);
     }
@@ -65,7 +64,7 @@ export function runDependencyCheckOnProject(): CodeInspection<ProjectReview, NoP
         );
 
         try {
-            if (result.code == 0) {
+            if (result.code === 0) {
                 const f: ProjectFile = await p.findFile("target/dependency-check-report.json");
                 if (checkVulnerabilites(f)) {
                     review.comments.push({
@@ -95,18 +94,21 @@ export function runConfusingDependenciesCheck(): CodeInspection<ProjectReview, N
             comments: [],
         };
 
+        const log = new StringCapturingProgressLog();
         const spawnOptions = await enrich({}, project);
 
-        const result: ExecPromiseResult = await execPromise(
+        const result = await spawnLog(
             "lein",
             ["deps", ":tree"],
             {
                 ...spawnOptions,
                 cwd: project.baseDir,
+                log,
+                errorFinder: (code, signal, l) => l.log.includes("confusing"),
             },
         );
 
-        if (result.stderr.includes("confusing")) {
+        if (result.code !== 0) {
             review.comments.push({
                 severity: "error",
                 detail: result.stderr,
