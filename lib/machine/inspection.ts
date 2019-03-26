@@ -19,6 +19,8 @@ import {
     NoParameters,
     Project,
     ProjectReview,
+    logger,
+    ProjectFile,
 } from "@atomist/automation-client";
 import {
     CodeInspection,
@@ -29,6 +31,18 @@ import {
     SpawnLogResult,
 } from "@atomist/sdm";
 import { enrich } from "./enrich";
+import * as _ from "lodash";
+
+function checkVulnerabilites(f: ProjectFile): boolean {
+    try {
+        const report = JSON.parse(f.getContentSync());
+        logger.info(`check for vulnerabilities: ${_.some(_.get(report, "dependencies"), 'vulnerabilities')}`);
+        logger.info(`length of vulnerabilities vector ${_.concat(_.map(_.filter(_.get(report, "dependencies"), 'vulnerabilities'), 'vulnerabilities')).length}`);
+    } catch (e) {
+        logger.error(e);
+    }
+    return false;
+}
 
 export function runDependencyCheckOnProject(): CodeInspection<ProjectReview, NoParameters> {
 
@@ -42,7 +56,7 @@ export function runDependencyCheckOnProject(): CodeInspection<ProjectReview, NoP
 
         const result: SpawnLogResult = await spawnLog(
             "lein",
-            ["with-profile", "-dev", "dependency-check", "--throw"],
+            ["with-profile", "-dev", "dependency-check", "--output-format", "JSON"],
             {
                 ...spawnOptions,
                 log: new LoggingProgressLog("dependency-check"),
@@ -50,12 +64,21 @@ export function runDependencyCheckOnProject(): CodeInspection<ProjectReview, NoP
             },
         );
 
-        if (result.code !== 0) {
-            review.comments.push({
-                category: "OWasp Dependency Check failed",
-                severity: "warn",
-                detail: "please run `lein with-profile -dev dependency-check` to generate a new html report of the violation",
-            });
+        try {
+            if (result.code == 0) {
+                const f: ProjectFile = await p.findFile("target/dependency-check-report.json");
+                if (checkVulnerabilites(f)) {
+                    review.comments.push({
+                        category: "OWasp Dependency Check failed",
+                        severity: "warn",
+                        detail: "please run `lein with-profile -dev dependency-check` to generate a new html report of the violation",
+                    });
+                }
+            } else {
+                logger.warn(`OWasp dependency check failed to run.  Result:  ${result.code}`);
+            }
+        } catch (e) {
+            logger.warn(`OWasp dependency check failed to run.  Exception: ${e}`);
         }
 
         return review;
