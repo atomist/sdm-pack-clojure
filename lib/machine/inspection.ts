@@ -16,11 +16,11 @@
 
 import {
     GitProject,
+    logger,
     NoParameters,
     Project,
-    ProjectReview,
-    logger,
     ProjectFile,
+    ProjectReview,
 } from "@atomist/automation-client";
 import {
     CodeInspection,
