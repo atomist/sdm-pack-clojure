@@ -21,7 +21,6 @@ import {
     Project,
     ProjectFile,
     ProjectReview,
-        ,
 } from "@atomist/automation-client";
 import {
     CodeInspection,
