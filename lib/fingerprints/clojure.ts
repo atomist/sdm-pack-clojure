@@ -32,7 +32,7 @@ export const Logback: Feature = {
     toDisplayableFingerprint: fp => fp.name,
 };
 
-export const LeinMavenDeps: Feature = {
+export const LeinDeps: Feature = {
     displayName: "Lein dependencies",
     extract: p => depsFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),

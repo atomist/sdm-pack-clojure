@@ -26,3 +26,8 @@ export {
     IsClojure,
     IsLein,
 } from "./lib/support/pushTest";
+export {
+    Logback,
+    LeinDeps,
+    CljFunctions,
+} from "./lib/fingerprints/clojure"
