@@ -71,6 +71,7 @@ export function runDependencyCheckOnProject(): CodeInspection<ProjectReview, NoP
                 if (checkVulnerabilites(f)) {
                     review.comments.push({
                         category: "OWasp Dependency Check failed",
+                        subcategory: "to fix",
                         severity: "warn",
                         detail: "please run `lein with-profile -dev dependency-check` to generate a new html report of the violation",
                     });
@@ -115,6 +116,7 @@ export function runConfusingDependenciesCheck(): CodeInspection<ProjectReview, N
                 severity: "error",
                 detail: result.stderr,
                 category: "dependency confusion",
+                subcategory: "output"
             });
         }
 
