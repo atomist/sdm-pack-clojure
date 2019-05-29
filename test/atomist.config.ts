@@ -75,12 +75,14 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
             .itMeans("fingerprint a clojure project")
             .setGoals(LeinDefaultBranchBuildGoals));
 
-    sdm.addExtensionPacks(leinSupport({
-        dockerBuild,
-        version,
-        autofixGoal: autofix,
-        inspectGoal: autoCodeInspection,
-    }));
+    sdm.addExtensionPacks(
+        leinSupport({
+            dockerBuild,
+            version,
+            autofixGoal: autofix,
+            inspectGoal: autoCodeInspection,
+        }),
+    );
 
     autoCodeInspection
         .withListener(ApproveGoalIfErrorComments)

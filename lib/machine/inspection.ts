@@ -36,7 +36,9 @@ function checkVulnerabilites(f: ProjectFile): boolean {
     try {
         const report = JSON.parse(f.getContentSync());
         logger.info(`check for vulnerabilities: ${_.some(_.get(report, "dependencies"), "vulnerabilities")}`);
-        logger.info(`length of vulnerabilities vector ${_.concat(_.map(_.filter(_.get(report, "dependencies"), "vulnerabilities"), "vulnerabilities")).length}`);
+        logger.info(
+            `length of vulnerabilities vector
+            ${_.concat(_.map(_.filter(_.get(report, "dependencies"), "vulnerabilities"), "vulnerabilities")).length}`);
     } catch (e) {
         logger.error(e);
     }
