@@ -116,7 +116,7 @@ export function runConfusingDependenciesCheck(): CodeInspection<ProjectReview, N
                 severity: "error",
                 detail: result.stderr,
                 category: "dependency confusion",
-                subcategory: "output"
+                subcategory: "output",
             });
         }
 
