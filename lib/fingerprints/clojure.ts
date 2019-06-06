@@ -26,6 +26,7 @@ import { Feature } from "@atomist/sdm-pack-fingerprints";
 
 export const Logback: Feature = {
     displayName: "Logback",
+    name: "elk-logback",
     extract: p => logbackFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => fp.name === "elk-logback",
@@ -34,6 +35,7 @@ export const Logback: Feature = {
 
 export const LeinDeps: Feature = {
     displayName: "Lein dependencies",
+    name: "clojure-project",
     extract: p => depsFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => {
@@ -45,6 +47,7 @@ export const LeinDeps: Feature = {
 
 export const CljFunctions: Feature = {
     displayName: "Clojure Functions",
+    name: "public-defn-bodies",
     extract: p => cljFunctionFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => fp.name.startsWith("public-defn-bodies"),

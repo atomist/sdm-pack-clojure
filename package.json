@@ -34,15 +34,15 @@
     "@atomist/clj-editors": "*"
   },
   "devDependencies": {
-    "@atomist/clj-editors": "0.6.5",
     "@atomist/automation-client": "^1.3.0",
+    "@atomist/clj-editors": "0.6.6",
     "@atomist/sdm": "1.3.0-master.20190213170255",
     "@atomist/sdm-core": "1.3.0-master.20190213143939",
     "@atomist/sdm-local": "^1.0.5",
     "@atomist/sdm-pack-build": "1.0.4-master.20181217220011",
     "@atomist/sdm-pack-docker": "1.1.0-master.20190213113315",
+    "@atomist/sdm-pack-fingerprints": "3.0.7",
     "@atomist/sdm-pack-issue": "1.1.0",
-    "@atomist/sdm-pack-fingerprints": "3.0.4",
     "@atomist/slack-messages": "1.1.0-master.20181115202354",
     "@types/dateformat": "^1.0.1",
     "@types/lodash": "^4.14.116",
