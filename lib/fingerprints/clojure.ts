@@ -18,9 +18,10 @@ import { LocalProject } from "@atomist/automation-client";
 import {
     applyFingerprint,
     cljFunctionFingerprints,
-    depsFingerprints,
     logbackFingerprints,
     renderProjectLibDiff,
+    leinDeps,
+    leinCoordinates,
 } from "@atomist/clj-editors";
 import { Feature } from "@atomist/sdm-pack-fingerprints";
 
@@ -35,11 +36,23 @@ export const Logback: Feature = {
 
 export const LeinDeps: Feature = {
     displayName: "Lein dependencies",
-    name: "clojure-project",
-    extract: p => depsFingerprints((p as LocalProject).baseDir),
+    name: "clojure-project-deps",
+    extract: p => leinDeps((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => {
-        return fp.name.startsWith("clojure-project");
+        return fp.name.startsWith(LeinDeps.name);
+    },
+    toDisplayableFingerprint: fp => fp.name,
+    summary: renderProjectLibDiff,
+};
+
+export const LeinCoordinates: Feature = {
+    displayName: "Lein dependencies",
+    name: "clojure-project-coordinates",
+    extract: p => leinCoordinates((p as LocalProject).baseDir),
+    apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
+    selector: fp => {
+        return fp.name.startsWith(LeinCoordinates.name);
     },
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
