@@ -40,7 +40,7 @@ export const LeinDeps: Feature = {
     extract: p => leinDeps((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => {
-        return fp.name.startsWith(LeinDeps.name);
+        return fp.type && fp.type === LeinDeps.name;
     },
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
@@ -52,7 +52,7 @@ export const LeinCoordinates: Feature = {
     extract: p => leinCoordinates((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => {
-        return fp.name.startsWith(LeinCoordinates.name);
+        return fp.name === LeinCoordinates.name;
     },
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
@@ -63,6 +63,6 @@ export const CljFunctions: Feature = {
     name: "public-defn-bodies",
     extract: p => cljFunctionFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => fp.name.startsWith("public-defn-bodies"),
+    selector: fp => fp.type && fp.type === "public-defn-bodies",
     toDisplayableFingerprint: fp => fp.name,
 };
