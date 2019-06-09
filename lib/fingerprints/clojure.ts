@@ -18,10 +18,10 @@ import { LocalProject } from "@atomist/automation-client";
 import {
     applyFingerprint,
     cljFunctionFingerprints,
+    leinCoordinates,
+    leinDeps,
     logbackFingerprints,
     renderProjectLibDiff,
-    leinDeps,
-    leinCoordinates,
 } from "@atomist/clj-editors";
 import { Feature } from "@atomist/sdm-pack-fingerprints";
 
