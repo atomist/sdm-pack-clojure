@@ -39,21 +39,17 @@ export const LeinDeps: Feature = {
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => {
-        return fp.type && fp.type === LeinDeps.name;
-    },
+    selector: fp => fp.type && fp.type === LeinDeps.name,
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
 };
 
 export const LeinCoordinates: Feature = {
-    displayName: "Lein dependencies",
+    displayName: "Lein Project Coordinates",
     name: "clojure-project-coordinates",
     extract: p => leinCoordinates((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => {
-        return fp.name === LeinCoordinates.name;
-    },
+    selector: fp => fp.name === LeinCoordinates.name,
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
 };

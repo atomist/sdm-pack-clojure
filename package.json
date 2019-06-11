@@ -25,23 +25,23 @@
   },
   "peerDependencies": {
     "@atomist/automation-client": "*",
-    "@atomist/sdm-pack-fingerpints": "*",
+    "@atomist/sdm-pack-fingerpints": ">=3.0.9",
     "@atomist/sdm": "*",
     "@atomist/sdm-core": "*",
     "@atomist/sdm-pack-build": "*",
     "@atomist/sdm-pack-docker": "*",
     "@atomist/slack-messages": "*",
-    "@atomist/clj-editors": "*"
+    "@atomist/clj-editors": ">=0.7.1"
   },
   "devDependencies": {
     "@atomist/automation-client": "^1.3.0",
-    "@atomist/clj-editors": "0.6.9",
+    "@atomist/clj-editors": "0.7.1",
     "@atomist/sdm": "1.3.0-master.20190213170255",
     "@atomist/sdm-core": "1.3.0-master.20190213143939",
     "@atomist/sdm-local": "^1.0.5",
     "@atomist/sdm-pack-build": "1.0.4-master.20181217220011",
     "@atomist/sdm-pack-docker": "1.1.0-master.20190213113315",
-    "@atomist/sdm-pack-fingerprints": "3.0.7",
+    "@atomist/sdm-pack-fingerprints": "3.0.9",
     "@atomist/sdm-pack-issue": "1.1.0",
     "@atomist/slack-messages": "1.1.0-master.20181115202354",
     "@types/dateformat": "^1.0.1",

@@ -29,5 +29,6 @@ export {
 export {
     Logback,
     LeinDeps,
+    LeinCoordinates,
     CljFunctions,
-} from "./lib/fingerprints/clojure"
+} from "./lib/fingerprints/clojure";
