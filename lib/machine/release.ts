@@ -34,7 +34,10 @@ import {
     SpawnLogOptions,
 } from "@atomist/sdm";
 import { readSdmVersion } from "@atomist/sdm-core";
-import { DockerOptions, DockerRegistry } from "@atomist/sdm-pack-docker";
+import {
+    DockerOptions,
+    DockerRegistry,
+} from "@atomist/sdm-pack-docker";
 
 interface ProjectRegistryInfo {
     registry: string;
