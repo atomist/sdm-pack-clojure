@@ -69,9 +69,9 @@ import { rwlcVersion } from "./release";
 
 export const imageNamer: DockerImageNameCreator =
     async (p: GitProject,
-           sdmGoal: SdmGoalEvent,
-           options: DockerOptions,
-           ctx: HandlerContext) => {
+        sdmGoal: SdmGoalEvent,
+        options: DockerOptions,
+        ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
@@ -182,7 +182,7 @@ const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteG
 export const LeinBuilder = spawnBuilder(
     {
         name: "atomist.sh",
-        commands: [{ command: "./atomist.sh", args: [], options: { env: {} } }],
+        commands: [{ command: "./atomist.sh", args: [] }],
         errorFinder: (code, signal, l) => {
             return code !== 0;
         },
