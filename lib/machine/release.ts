@@ -34,7 +34,7 @@ import {
     SpawnLogOptions,
 } from "@atomist/sdm";
 import { readSdmVersion } from "@atomist/sdm-core";
-import { DockerOptions } from "@atomist/sdm-pack-docker";
+import { DockerOptions, DockerRegistry } from "@atomist/sdm-pack-docker";
 
 interface ProjectRegistryInfo {
     registry: string;
@@ -84,7 +84,7 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
 
     return async (log: ProgressLog) => {
 
-        const opts: SpawnLogOptions = {log};
+        const opts: SpawnLogOptions = { log };
 
         if (swc.cwd) {
             opts.cwd = swc.cwd;
@@ -127,8 +127,9 @@ async function executeLoggers(els: ExecuteLogger[], progressLog: ProgressLog): P
 export async function dockerReleasePreparation(p: GitProject, rwlc: GoalInvocation): Promise<ExecuteGoalResult> {
     const version = await rwlcVersion(rwlc);
     const dockerOptions = configurationValue<DockerOptions>("sdm.docker.hub");
+    const registry: DockerRegistry = dockerOptions.registry instanceof Array ? dockerOptions.registry[0] : dockerOptions.registry;
     const image = dockerImage({
-        registry: dockerOptions.registry,
+        registry: registry.registry,
         name: p.name,
         version,
     });
@@ -137,7 +138,7 @@ export async function dockerReleasePreparation(p: GitProject, rwlc: GoalInvocati
         {
             cmd: {
                 command: "docker",
-                args: ["login", "--username", dockerOptions.user, "--password", dockerOptions.password],
+                args: ["login", "--username", registry.user, "--password", registry.password],
             },
         },
         {
@@ -170,15 +171,17 @@ export function executeReleaseDocker(
                 }
             }
 
+            const registry: DockerRegistry = options.registry instanceof Array ? options.registry[0] : options.registry;
+
             const version = await rwlcVersion(rwlc);
             const versionRelease = releaseVersion(version);
             const image = dockerImage({
-                registry: options.registry,
+                registry: registry.registry,
                 name: rwlc.id.repo,
                 version,
             });
             const tag = dockerImage({
-                registry: options.registry,
+                registry: registry.registry,
                 name: rwlc.id.repo,
                 version: versionRelease,
             });

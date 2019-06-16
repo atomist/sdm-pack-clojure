@@ -15,7 +15,6 @@
  */
 
 import {
-    asSpawnCommand,
     GitHubRepoRef,
     GitProject,
     HandlerContext,
@@ -83,11 +82,11 @@ export const imageNamer: DockerImageNameCreator =
             ctx);
         const projectName = _.last(clj.getName(projectclj).split("/"));
         logger.info(`Docker Image name is generated from ${projectclj} name and version ${projectName} ${newversion}`);
-        return {
+        return [{
             name: projectName,
-            registry: options.registry,
+            registry: options.registry instanceof Array ? options.registry[0].registry : options.registry.registry,
             tags: [newversion],
-        };
+        }];
     };
 
 export interface LeinSupportOptions extends WellKnownGoals {
@@ -122,11 +121,9 @@ export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
 
             goals.dockerBuild.with({
                 name: "lein-docker-build",
-                imageNameCreator: imageNamer,
-                options: {
-                    ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-                    dockerfileFinder: async () => "docker/Dockerfile",
-                },
+                dockerImageNameCreator: imageNamer,
+                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+                dockerfileFinder: async () => "docker/Dockerfile",
                 pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")),
             })
                 .withProjectListener(Metajar);
@@ -185,7 +182,7 @@ const LeinDeployer: ExecuteGoal = async (rwlc: GoalInvocation): Promise<ExecuteG
 export const LeinBuilder = spawnBuilder(
     {
         name: "atomist.sh",
-        commands: [asSpawnCommand("./atomist.sh", { env: {} })],
+        commands: [{ command: "./atomist.sh", args: [], options: { env: {} } }],
         errorFinder: (code, signal, l) => {
             return code !== 0;
         },
