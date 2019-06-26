@@ -68,10 +68,12 @@ import {
 import { rwlcVersion } from "./release";
 
 export const imageNamer: DockerImageNameCreator =
-    async (p: GitProject,
-           sdmGoal: SdmGoalEvent,
-           options: DockerOptions,
-           ctx: HandlerContext) => {
+    async (
+        p: GitProject,
+        sdmGoal: SdmGoalEvent,
+        options: DockerOptions,
+        ctx: HandlerContext) => {
+
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
@@ -81,12 +83,14 @@ export const imageNamer: DockerImageNameCreator =
             sdmGoal.branch,
             ctx);
         const projectName = _.last(clj.getName(projectclj).split("/"));
+
         logger.info(`Docker Image name is generated from ${projectclj} name and version ${projectName} ${newversion}`);
-        return [{
+
+        return {
             name: projectName,
-            registry: options.registry instanceof Array ? options.registry[0].registry : options.registry.registry,
+            registry: options.registry,
             tags: [newversion],
-        }];
+        };
     };
 
 export interface LeinSupportOptions extends WellKnownGoals {
@@ -121,9 +125,11 @@ export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
 
             goals.dockerBuild.with({
                 name: "lein-docker-build",
-                dockerImageNameCreator: imageNamer,
-                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-                dockerfileFinder: async () => "docker/Dockerfile",
+                imageNameCreator: imageNamer,
+                options: {
+                    ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+                    dockerfileFinder: async () => "docker/Dockerfile",
+                },
                 pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")),
             })
                 .withProjectListener(Metajar);
