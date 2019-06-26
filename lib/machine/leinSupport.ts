@@ -65,7 +65,18 @@ import {
     runConfusingDependenciesCheck,
     runDependencyCheckOnProject,
 } from "./inspection";
-import { rwlcVersion } from "./release";
+
+export async function rwlcVersion(gi: GoalInvocation): Promise<string> {
+    const sdmGoal = gi.goalEvent;
+    const version = await readSdmVersion(
+        sdmGoal.repo.owner,
+        sdmGoal.repo.name,
+        sdmGoal.repo.providerId,
+        sdmGoal.sha,
+        sdmGoal.branch,
+        gi.context);
+    return version;
+}
 
 export const imageNamer: DockerImageNameCreator =
     async (
@@ -129,6 +140,7 @@ export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
                 options: {
                     ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
                     dockerfileFinder: async () => "docker/Dockerfile",
+                    push: true,
                 },
                 pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")),
             })
