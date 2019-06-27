@@ -23,7 +23,7 @@ import {
     logbackFingerprints,
     renderProjectLibDiff,
 } from "@atomist/clj-editors";
-import { Feature } from "@atomist/sdm-pack-fingerprints";
+import { DefaultTargetDiffHandler, Feature } from "@atomist/sdm-pack-fingerprints";
 
 export const Logback: Feature = {
     displayName: "Logback",
@@ -32,6 +32,9 @@ export const Logback: Feature = {
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => fp.name === "elk-logback",
     toDisplayableFingerprint: fp => fp.name,
+    workflows: [
+        DefaultTargetDiffHandler,
+    ],
 };
 
 export const LeinDeps: Feature = {
@@ -42,6 +45,9 @@ export const LeinDeps: Feature = {
     selector: fp => fp.type && fp.type === LeinDeps.name,
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
+    workflows: [
+        DefaultTargetDiffHandler,
+    ],
 };
 
 export const LeinCoordinates: Feature = {
@@ -61,4 +67,7 @@ export const CljFunctions: Feature = {
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
     selector: fp => fp.type && fp.type === "public-defn-bodies",
     toDisplayableFingerprint: fp => fp.name,
+    workflows: [
+        DefaultTargetDiffHandler,
+    ],
 };
