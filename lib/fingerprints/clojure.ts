@@ -23,7 +23,10 @@ import {
     logbackFingerprints,
     renderProjectLibDiff,
 } from "@atomist/clj-editors";
-import { DefaultTargetDiffHandler, Feature } from "@atomist/sdm-pack-fingerprints";
+import {
+    DefaultTargetDiffHandler,
+    Feature,
+} from "@atomist/sdm-pack-fingerprints";
 
 export const Logback: Feature = {
     displayName: "Logback",
