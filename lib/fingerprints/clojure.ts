@@ -33,7 +33,6 @@ export const Logback: Feature = {
     name: "elk-logback",
     extract: p => logbackFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => fp.name === "elk-logback",
     toDisplayableFingerprint: fp => fp.name,
     workflows: [
         DefaultTargetDiffHandler,
@@ -45,7 +44,6 @@ export const LeinDeps: Feature = {
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => fp.type && fp.type === LeinDeps.name,
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
     workflows: [
@@ -58,7 +56,6 @@ export const LeinCoordinates: Feature = {
     name: "clojure-project-coordinates",
     extract: p => leinCoordinates((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => fp.name === LeinCoordinates.name,
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
 };
@@ -68,7 +65,6 @@ export const CljFunctions: Feature = {
     name: "public-defn-bodies",
     extract: p => cljFunctionFingerprints((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    selector: fp => fp.type && fp.type === "public-defn-bodies",
     toDisplayableFingerprint: fp => fp.name,
     workflows: [
         DefaultTargetDiffHandler,

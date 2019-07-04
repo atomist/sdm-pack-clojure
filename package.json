@@ -41,7 +41,7 @@
     "@atomist/sdm-local": "1.0.9-master.20190604162557",
     "@atomist/sdm-pack-build": "1.0.4",
     "@atomist/sdm-pack-docker": "^1.2.0",
-    "@atomist/sdm-pack-fingerprints": "3.1.3",
+    "@atomist/sdm-pack-fingerprints": "3.1.4",
     "@atomist/sdm-pack-issue": "1.1.0",
     "@atomist/slack-messages": "1.1.0-master.20181115202354",
     "@types/dateformat": "^1.0.1",
