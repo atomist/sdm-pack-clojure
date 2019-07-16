@@ -24,11 +24,11 @@ import {
     renderProjectLibDiff,
 } from "@atomist/clj-editors";
 import {
+    Aspect,
     DefaultTargetDiffHandler,
-    Feature,
 } from "@atomist/sdm-pack-fingerprints";
 
-export const Logback: Feature = {
+export const Logback: Aspect = {
     displayName: "Logback",
     name: "elk-logback",
     extract: p => logbackFingerprints((p as LocalProject).baseDir),
@@ -39,7 +39,7 @@ export const Logback: Feature = {
     ],
 };
 
-export const LeinDeps: Feature = {
+export const LeinDeps: Aspect = {
     displayName: "Lein dependencies",
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
@@ -51,7 +51,7 @@ export const LeinDeps: Feature = {
     ],
 };
 
-export const LeinCoordinates: Feature = {
+export const LeinCoordinates: Aspect = {
     displayName: "Lein Project Coordinates",
     name: "clojure-project-coordinates",
     extract: p => leinCoordinates((p as LocalProject).baseDir),
@@ -60,7 +60,7 @@ export const LeinCoordinates: Feature = {
     summary: renderProjectLibDiff,
 };
 
-export const CljFunctions: Feature = {
+export const CljFunctions: Aspect = {
     displayName: "Clojure Functions",
     name: "public-defn-bodies",
     extract: p => cljFunctionFingerprints((p as LocalProject).baseDir),
