@@ -44,7 +44,7 @@ export const LeinDeps: Aspect = {
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
     apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
-    toDisplayableFingerprint: fp => fp.name,
+    toDisplayableFingerprint: fp => `${fp.name}@${fp.data[1]}`,
     summary: renderProjectLibDiff,
     workflows: [
         DefaultTargetDiffHandler,
