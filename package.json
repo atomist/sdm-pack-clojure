@@ -26,8 +26,8 @@
   "peerDependencies": {
     "@atomist/automation-client": "*",
     "@atomist/sdm-pack-fingerpints": ">=4.0.0",
-    "@atomist/sdm": "*",
-    "@atomist/sdm-core": "*",
+    "@atomist/sdm": "^1.6.1",
+    "@atomist/sdm-core": "^1.6.1",
     "@atomist/sdm-pack-build": "*",
     "@atomist/sdm-pack-docker": "*",
     "@atomist/slack-messages": "*",
@@ -36,9 +36,9 @@
   "devDependencies": {
     "@atomist/automation-client": "^1.6.2",
     "@atomist/clj-editors": "0.8.1",
-    "@atomist/sdm": "^1.6.0",
-    "@atomist/sdm-core": "^1.6.0",
-    "@atomist/sdm-local": "^1.0.9",
+    "@atomist/sdm": "^1.6.1",
+    "@atomist/sdm-core": "^1.6.1",
+    "@atomist/sdm-local": "^1.1.0",
     "@atomist/sdm-pack-build": "^1.0.4",
     "@atomist/sdm-pack-docker": "^1.2.0",
     "@atomist/sdm-pack-fingerprints": "4.0.0",
