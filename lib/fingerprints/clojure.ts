@@ -32,7 +32,7 @@ export const Logback: Aspect = {
     displayName: "Logback",
     name: "elk-logback",
     extract: p => logbackFingerprints((p as LocalProject).baseDir),
-    apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
+    apply: (p, papi) => applyFingerprint((p as LocalProject).baseDir, papi.parameters.fp),
     toDisplayableFingerprint: fp => fp.name,
     workflows: [
         DefaultTargetDiffHandler,
@@ -43,7 +43,7 @@ export const LeinDeps: Aspect = {
     displayName: "Lein dependencies",
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
-    apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
+    apply: (p, papi) => applyFingerprint((p as LocalProject).baseDir, papi.parameters.fp),
     toDisplayableFingerprint: fp => `${fp.name}@${fp.data[1]}`,
     summary: renderProjectLibDiff,
     workflows: [
@@ -55,7 +55,7 @@ export const LeinCoordinates: Aspect = {
     displayName: "Lein Project Coordinates",
     name: "clojure-project-coordinates",
     extract: p => leinCoordinates((p as LocalProject).baseDir),
-    apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
+    apply: (p, papi) => applyFingerprint((p as LocalProject).baseDir, papi.parameters.fp),
     toDisplayableFingerprint: fp => fp.name,
     summary: renderProjectLibDiff,
 };
@@ -64,7 +64,7 @@ export const CljFunctions: Aspect = {
     displayName: "Clojure Functions",
     name: "public-defn-bodies",
     extract: p => cljFunctionFingerprints((p as LocalProject).baseDir),
-    apply: (p, fp) => applyFingerprint((p as LocalProject).baseDir, fp),
+    apply: (p, papi) => applyFingerprint((p as LocalProject).baseDir, papi.parameters.fp),
     toDisplayableFingerprint: fp => fp.name,
     workflows: [
         DefaultTargetDiffHandler,

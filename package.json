@@ -1,6 +1,6 @@
 {
   "name": "@atomist/sdm-pack-clojure",
-  "version": "1.0.26",
+  "version": "2.0.0",
   "description": "an Atomist SDM pack for Clojure projects",
   "author": "Atomist, Inc.",
   "license": "Apache-2.0",
@@ -25,23 +25,23 @@
   },
   "peerDependencies": {
     "@atomist/automation-client": "*",
-    "@atomist/sdm-pack-fingerprints": "^4.0.5-master.20190821001652",
+    "@atomist/sdm-pack-fingerprints": ">=5.0.0-master.20190821102259",
     "@atomist/sdm": "^1.6.1",
     "@atomist/sdm-core": "^1.6.1",
     "@atomist/sdm-pack-build": "*",
     "@atomist/sdm-pack-docker": "*",
     "@atomist/slack-messages": "*",
-    "@atomist/clj-editors": ">=0.7.1"
+    "@atomist/clj-editors": ">=0.8.2-master.20190816115246"
   },
   "devDependencies": {
     "@atomist/automation-client": "^1.6.2",
-    "@atomist/clj-editors": "0.8.1",
+    "@atomist/clj-editors": "^0.8.2-master.20190816115246",
     "@atomist/sdm": "^1.6.1",
     "@atomist/sdm-core": "^1.6.1",
     "@atomist/sdm-local": "^1.1.0",
     "@atomist/sdm-pack-build": "^1.0.4",
     "@atomist/sdm-pack-docker": "^1.2.0",
-    "@atomist/sdm-pack-fingerprints": "^4.0.5-master.20190821001652",
+    "@atomist/sdm-pack-fingerprints": "^5.0.0-master.20190821102259",
     "@atomist/sdm-pack-issue": "^1.2.2",
     "@atomist/slack-messages": "^1.1.1",
     "@types/dateformat": "^1.0.1",
@@ -59,7 +59,7 @@
     "supervisor": "^0.12.0",
     "ts-node": "8.2.0",
     "tslint": "^5.17.0",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.0",
     "typescript": "^3.5.1"
   },
   "directories": {
