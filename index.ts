@@ -19,6 +19,8 @@ export {
     leinSupport,
     LeinBuilder,
     LeinProjectVersioner,
+    MetajarPreparation,
+    Metajar,
 } from "./lib/machine/leinSupport";
 export { MaterialChangeToClojureRepo } from "./lib/support/materialChangeToClojureRepo";
 export {

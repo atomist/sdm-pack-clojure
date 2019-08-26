@@ -30,6 +30,7 @@ import {
 } from "@atomist/sdm-pack-fingerprints";
 
 const applyWithCljs: ApplyFingerprint = async (p, api) => {
+    // wrap clj-editors
     const success: boolean = await applyFingerprint((p as LocalProject).baseDir, api.parameters.fp);
     return {
         edited: success,
@@ -54,7 +55,7 @@ export const LeinDeps: Aspect = {
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
     apply: applyWithCljs,
-    toDisplayableFingerprint: fp => `${fp.name}@${fp.data[1]}`,
+    toDisplayableFingerprint: fp => `[${fp.data[0]} "${fp.data[1]}"]`,
     summary: renderProjectLibDiff,
     workflows: [
         DefaultTargetDiffHandler,
