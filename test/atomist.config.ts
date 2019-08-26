@@ -35,7 +35,6 @@ import {
 } from "@atomist/sdm-core";
 import { leinSupport } from "..";
 import {
-    dockerBuild,
     leinBuild,
 } from "../lib/machine/goals";
 
@@ -56,9 +55,8 @@ export const LeinBuildGoals: Goals = goals("Lein Build")
     .plan(leinBuild).after(version);
 
 export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
-    .plan(DefaultBranchGoals, LeinBuildGoals)
     // .plan(publish).after(leinBuild)
-    .plan(dockerBuild).after(leinBuild);
+    .plan(DefaultBranchGoals, LeinBuildGoals);
 
 const IsLein: PushTest = pushTest(`contains package.json file`, async pci =>
     !!(await pci.project.getFile("project.clj")),
@@ -77,7 +75,6 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
 
     sdm.addExtensionPacks(
         leinSupport({
-            dockerBuild,
             version,
             autofixGoal: autofix,
             inspectGoal: autoCodeInspection,

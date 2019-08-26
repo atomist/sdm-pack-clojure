@@ -19,10 +19,8 @@ import {
     IndependentOfEnvironment,
 } from "@atomist/sdm";
 import { Build } from "@atomist/sdm-pack-build";
-import { DockerBuild } from "@atomist/sdm-pack-docker";
 
 export const leinBuild = new Build();
-export const dockerBuild = new DockerBuild();
 
 export const publish = new GoalWithFulfillment({
     uniqueName: "Publish",

@@ -17,7 +17,6 @@
 import {
     GitHubRepoRef,
     GitProject,
-    HandlerContext,
     logger,
 } from "@atomist/automation-client";
 import * as clj from "@atomist/clj-editors";
@@ -29,11 +28,9 @@ import {
     GoalInvocation,
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
-    hasFile,
     LogSuppressor,
     metadata,
     not,
-    SdmGoalEvent,
     spawnLog,
     ToDefaultBranch,
     WellKnownGoals,
@@ -44,11 +41,6 @@ import {
     Version,
 } from "@atomist/sdm-core";
 import { spawnBuilder } from "@atomist/sdm-pack-build";
-import {
-    DockerBuild,
-    DockerImageNameCreator,
-    DockerOptions,
-} from "@atomist/sdm-pack-docker";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
 import * as _ from "lodash";
@@ -78,35 +70,8 @@ export async function rwlcVersion(gi: GoalInvocation): Promise<string> {
     return version;
 }
 
-export const imageNamer: DockerImageNameCreator =
-    async (
-        p: GitProject,
-        sdmGoal: SdmGoalEvent,
-        options: DockerOptions,
-        ctx: HandlerContext) => {
-
-        const projectclj = path.join(p.baseDir, "project.clj");
-        const newversion = await readSdmVersion(
-            sdmGoal.repo.owner,
-            sdmGoal.repo.name,
-            sdmGoal.repo.providerId,
-            sdmGoal.sha,
-            sdmGoal.branch,
-            ctx);
-        const projectName = _.last(clj.getName(projectclj).split("/"));
-
-        logger.info(`Docker Image name is generated from ${projectclj} name and version ${projectName} ${newversion}`);
-
-        return {
-            name: projectName,
-            registry: options.registry,
-            tags: [newversion],
-        };
-    };
-
 export interface LeinSupportOptions extends WellKnownGoals {
     version?: Version;
-    dockerBuild?: DockerBuild;
 }
 
 export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
@@ -133,18 +98,6 @@ export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
                 versioner: LeinProjectVersioner,
                 pushTest: IsLein,
             });
-
-            goals.dockerBuild.with({
-                name: "lein-docker-build",
-                imageNameCreator: imageNamer,
-                options: {
-                    ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-                    dockerfileFinder: async () => "docker/Dockerfile",
-                    push: true,
-                },
-                pushTest: allSatisfied(IsLein, hasFile("docker/Dockerfile")),
-            })
-                .withProjectListener(Metajar);
 
             goals.autofixGoal.with({
                 name: "cljformat",
