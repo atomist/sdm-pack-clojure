@@ -31,12 +31,15 @@ import {
 
 const applyWithCljs: ApplyFingerprint = async (p, api) => {
     // wrap clj-editors
-    const success: boolean = await applyFingerprint((p as LocalProject).baseDir, api.parameters.fp);
-    return {
-        edited: success,
-        success,
-        target: p,
-    };
+    const success = await applyFingerprint((p as LocalProject).baseDir, api.parameters.fp);
+    if (!success) {
+        return {
+            edited: success,
+            success,
+            target: p,
+        };
+    }
+    return p;
 };
 
 export const Logback: Aspect = {
@@ -55,7 +58,7 @@ export const LeinDeps: Aspect = {
     name: "clojure-project-deps",
     extract: p => leinDeps((p as LocalProject).baseDir),
     apply: applyWithCljs,
-    toDisplayableFingerprint: fp => `[${fp.data[0]} "${fp.data[1]}"]`,
+    toDisplayableFingerprint: fp => fp.data[1],
     summary: renderProjectLibDiff,
     workflows: [
         DefaultTargetDiffHandler,
