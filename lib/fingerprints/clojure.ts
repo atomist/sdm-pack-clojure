@@ -27,7 +27,7 @@ import {
     ApplyFingerprint,
     Aspect,
     DefaultTargetDiffHandler,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 
 const applyWithCljs: ApplyFingerprint = async (p, api) => {
     // wrap clj-editors
