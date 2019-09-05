@@ -199,9 +199,8 @@ export const LeinProjectVersioner: ProjectVersioner = async (status, p) => {
         projectVersion = projectVersion.replace("-SNAPSHOT", "");
     }
     const branch = status.branch;
-    // TODO - where did my defaultBranch go?
-    const branchSuffix = branch !== "master" ? `${branch}.` : "";
-    const v = `${projectVersion}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
+    const branchSuffix = branch !== status.push.repo.defaultBranch ? `${branch}.` : "";
+    const v = `${projectVersion}-${branchSuffix.replace(/\//g, "-")}${df(new Date(), "yyyymmddHHMMss")}`;
 
     await clj.setVersion(file, v);
     return v;
