@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "@atomist/automation-client": "^1.6.2",
-    "@atomist/clj-editors": "0.8.2",
     "@atomist/sdm": "^1.6.1",
     "@atomist/sdm-core": "^1.6.1",
     "@atomist/sdm-local": "^1.1.0",
