@@ -1,0 +1,317 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@atomist/sdm-pack-clojure</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@atomist/sdm-pack-clojure</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> @atomist/sdm-pack-clojure</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#atomistsdm-pack-clojure" id="atomistsdm-pack-clojure" style="color: inherit; text-decoration: none;">
+					<h1>@atomist/sdm-pack-clojure</h1>
+				</a>
+				<p><a href="https://app.atomist.com/workspace/T29E48P34"><img src="http://badge.atomist.com/T29E48P34/atomist/sdm-pack-clojure/22172de5-0199-4283-a555-5f3b23ecfc5d" alt="atomist sdm goals"></a>
+				<a href="https://www.npmjs.com/package/@atomist/sdm-pack-clojure/v/next"><img src="https://img.shields.io/npm/v/@atomist/sdm-pack-clojure/next.svg" alt="npm version"></a></p>
+				<p><a href="https://atomist.com/" title="Atomist - How Teams Deliver Software">Atomist</a> software delivery machine (SDM) extension pack
+					providing automated creation, building, and delivery of
+				[Spring][spring] and [Spring Boot][spring-boot] applications.</p>
+				<p>See the <a href="https://docs.atomist.com/" title="Atomist Documentation">Atomist documentation</a> for more information on
+					what SDMs are and what they can do for you using the Atomist API for
+				software.</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>Install the dependency in your SDM project.</p>
+				<pre><code>$ <span class="hljs-built_in">npm</span> install @atomist/sdm-pack-clojure</code></pre><p>Then use its exported method to add the functionality to your SDM in
+				your machine definition.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {
+    SoftwareDeliveryMachine,
+    SoftwareDeliveryMachineConfiguration,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">"@atomist/sdm"</span>;
+<span class="hljs-keyword">import</span> {
+    createSoftwareDeliveryMachine,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">"@atomist/sdm-core"</span>;
+<span class="hljs-keyword">import</span> { LeinSupport } <span class="hljs-keyword">from</span> <span class="hljs-string">"@atomist/sdm-pack-clojure"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">machine</span>(<span class="hljs-params">configuration: SoftwareDeliveryMachineConfiguration</span>): <span class="hljs-title">SoftwareDeliveryMachine</span> </span>{
+
+    <span class="hljs-keyword">const</span> sdm = createSoftwareDeliveryMachine(
+        {
+            name: <span class="hljs-string">"My Software Delivery Machine"</span>,
+            configuration,
+        },
+        whenPushSatisfies(IsLein)
+            .itMeans(<span class="hljs-string">"fingerprint a clojure project"</span>)
+            .setGoals(LeinDefaultBranchBuildGoals));
+
+    sdm.addExtensionPacks(LeinSupport);
+
+    <span class="hljs-keyword">return</span> sdm;
+};</code></pre>
+				<a href="#goals" id="goals" style="color: inherit; text-decoration: none;">
+					<h2>Goals</h2>
+				</a>
+				<table>
+					<thead>
+						<tr>
+							<th align="left">goal</th>
+							<th align="left">long name</th>
+							<th align="left">clojure project best practice</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td align="left">leinBuild</td>
+							<td align="left">Lein build</td>
+							<td align="left">run leiningen build and return AppInfo according to leiningen project/version</td>
+						</tr>
+						<tr>
+							<td align="left">autofix</td>
+							<td align="left">cljformat</td>
+							<td align="left">run the cljformat tool on all .clj files</td>
+						</tr>
+						<tr>
+							<td align="left">version</td>
+							<td align="left">lein-version</td>
+							<td align="left">extract leiningen version, remove any &quot;-SNAPSHOT&quot;, add branch-timestamp suffix, and update leiningen project version</td>
+						</tr>
+						<tr>
+							<td align="left">dockerBuild</td>
+							<td align="left">lein-docker-build</td>
+							<td align="left">docker files are located at <code>docker/Dockerfile</code>, image name extracted from project.clj, and current version</td>
+						</tr>
+						<tr>
+							<td align="left">publish</td>
+							<td align="left">deploy-jar</td>
+							<td align="left">run lein deploy, ensuring that the versioning policy is consistent and project.clj version is in sync with build.  Goal includes</td>
+						</tr>
+						<tr>
+							<td align="left">a project listener to run our metajar preparation specific to how we construct docker images</td>
+							<td align="left"></td>
+							<td align="left"></td>
+						</tr>
+				</tbody></table>
+				<a href="#secrets" id="secrets" style="color: inherit; text-decoration: none;">
+					<h3>Secrets</h3>
+				</a>
+				<p>Secrets required during the build can be baked into each Repo or shared across all of the Repos.</p>
+				<pre><code>    <span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>/\@atomist/clj-editors/vault.js create key
+    <span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>/\@atomist/clj-editors/vault.js merge --data '{<span class="hljs-string">"CLOJARS_USERNAME"</span>: <span class="hljs-string">"xxxxx"</span>, <span class="hljs-string">"CLOJARS_PASSWORD"</span>: <span class="hljs-string">"xxxxxxx"</span>}'
+    <span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>/\@atomist/clj-editors/vault.js <span class="hljs-keyword">read</span></code></pre><p>The content of the <code>key.txt</code> is made available to running SDMs using the <code>TEAM_CRED</code> environment variable.</p>
+				<a href="#deploying-to-clojars" id="deploying-to-clojars" style="color: inherit; text-decoration: none;">
+					<h4>Deploying to Clojars</h4>
+				</a>
+				<p>For releases, we add repositories to our leiningen project.clj file</p>
+				<pre><code><span class="hljs-symbol">:repositories</span> [[<span class="hljs-string">"releases"</span> {<span class="hljs-symbol">:url</span> <span class="hljs-string">"https://clojars.org/repo"</span>
+                              <span class="hljs-symbol">:username</span> <span class="hljs-symbol">:env/clojars_username</span>
+                              <span class="hljs-symbol">:password</span> <span class="hljs-symbol">:env/clojars_password</span>
+                              <span class="hljs-symbol">:sign-releases</span> <span class="hljs-keyword">false</span>}]]
+</code></pre><p>And encrypt Clojars username/password into our vault.</p>
+				<a href="#deploying-clojure-service-docker-container-to-artifactory" id="deploying-clojure-service-docker-container-to-artifactory" style="color: inherit; text-decoration: none;">
+					<h4>Deploying Clojure service Docker container to Artifactory</h4>
+				</a>
+				<p>This pack is configured to pick up and use any docker registry referenced in the atomist.config.ts file at <code>sdm.docker.jfrog</code></p>
+				<pre><code>{
+    <span class="hljs-attr">"sdm"</span>: {
+        <span class="hljs-attr">"docker"</span>: {
+            <span class="hljs-attr">"jfrog"</span>: {
+                <span class="hljs-attr">"registry"</span>: <span class="hljs-string">""</span>,
+                <span class="hljs-attr">"user"</span>: <span class="hljs-string">""</span>,
+                <span class="hljs-attr">"password"</span>: <span class="hljs-string">""</span>
+            }
+        }
+    }
+}</code></pre>
+				<a href="#support" id="support" style="color: inherit; text-decoration: none;">
+					<h2>Support</h2>
+				</a>
+				<p>General support questions should be discussed in the <code>#support</code>
+				channel in the <a href="https://join.atomist.com/" title="Atomist Community Slack">Atomist community Slack workspace</a>.</p>
+				<p>If you find a problem, please create an <a href="https://github.com/atomist/sdm-pack-clojure/issues">issue</a>.</p>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h2>Development</h2>
+				</a>
+				<p>You will need to install <a href="https://nodejs.org/" title="Node.js">Node.js</a> to build and test this project.</p>
+				<a href="#build-and-test" id="build-and-test" style="color: inherit; text-decoration: none;">
+					<h3>Build and test</h3>
+				</a>
+				<p>Install dependencies.</p>
+				<pre><code>$ npm <span class="hljs-keyword">install</span></code></pre><p>Use the <code>build</code> package script to compile, test, lint, and build the
+				documentation.</p>
+				<pre><code>$ npm <span class="hljs-keyword">run</span><span class="bash"> build</span></code></pre>
+				<a href="#release" id="release" style="color: inherit; text-decoration: none;">
+					<h3>Release</h3>
+				</a>
+				<p>Releases are handled via the <a href="https://github.com/atomist/atomist-sdm" title="Atomist Software Delivery Machine">Atomist SDM</a>.  Just press
+				the &#39;Approve&#39; button in the Atomist dashboard or Slack.</p>
+				<hr>
+				<p>Created by <a href="https://atomist.com/" title="Atomist - How Teams Deliver Software">Atomist</a>.
+				Need Help?  <a href="https://join.atomist.com/" title="Atomist Community Slack">Join our Slack workspace</a>.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_fingerprints_clojure_.html">"lib/fingerprints/clojure"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_machine_enrich_.html">"lib/machine/enrich"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_machine_goals_.html">"lib/machine/goals"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_machine_inspection_.html">"lib/machine/inspection"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_machine_leinsupport_.html">"lib/machine/lein<wbr>Support"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_support_materialchangetoclojurerepo_.html">"lib/support/material<wbr>Change<wbr>ToClojure<wbr>Repo"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_support_pushtest_.html">"lib/support/push<wbr>Test"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lib_support_version_.html">"lib/support/version"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
