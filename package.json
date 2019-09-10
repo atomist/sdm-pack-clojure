@@ -31,11 +31,11 @@
     "@atomist/sdm-pack-build": "*",
     "@atomist/sdm-pack-docker": "*",
     "@atomist/slack-messages": "*",
-    "@atomist/clj-editors": ">=0.8.2-master.20190816115246"
+    "@atomist/clj-editors": "0.8.2"
   },
   "devDependencies": {
     "@atomist/automation-client": "^1.7.0",
-    "@atomist/clj-editors": "0.8.2-master.20190816115246",
+    "@atomist/clj-editors": "0.8.2",
     "@atomist/sdm": "^1.7.0",
     "@atomist/sdm-core": "^1.7.0",
     "@atomist/sdm-local": "^1.2.1",
