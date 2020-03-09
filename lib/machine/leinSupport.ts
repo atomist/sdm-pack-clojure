@@ -21,7 +21,6 @@ import {
 } from "@atomist/automation-client";
 import * as clj from "@atomist/clj-editors";
 import {
-    allSatisfied,
     ExecuteGoal,
     ExecuteGoalResult,
     ExtensionPack,
@@ -30,9 +29,7 @@ import {
     GoalProjectListenerRegistration,
     LogSuppressor,
     metadata,
-    not,
     spawnLog,
-    ToDefaultBranch,
     WellKnownGoals,
 } from "@atomist/sdm";
 import {
@@ -41,7 +38,6 @@ import {
     Version,
 } from "@atomist/sdm-core";
 import { spawnBuilder } from "@atomist/sdm-pack-build";
-import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
@@ -97,15 +93,6 @@ export function leinSupport(goals: LeinSupportOptions): ExtensionPack {
                 name: "lein-version",
                 versioner: LeinProjectVersioner,
                 pushTest: IsLein,
-            });
-
-            goals.autofixGoal.with({
-                name: "cljformat",
-                transform: async p => {
-                    await clj.cljfmt((p as GitProject).baseDir);
-                    return p;
-                },
-                pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
             });
 
             goals.inspectGoal.with({
